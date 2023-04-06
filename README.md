@@ -12,7 +12,7 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 - [x] Deploy local sablier
 - [x] Deploy local LIT & FLX
 - [x] Altar constructor
-- [ ] Altar treasury
+- [x] Altar treasury constructor
 - [ ] Start a stream from treasury to the Alitar
 - [ ] A utility for handling sablier deposit gotcha
 - [ ] Initialize the stream

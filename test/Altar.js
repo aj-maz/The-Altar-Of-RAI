@@ -22,7 +22,13 @@ describe("Altar", function () {
     const Altar = await ethers.getContractFactory("Altar");
     const altar = await Altar.deploy(sablier.address, lit.address, flx.address);
 
-    return { sablier, lit, flx, altar };
+    const AltarTreasury = await ethers.getContractFactory("AltarTreasury");
+    const altarTreasury = await AltarTreasury.deploy(
+      sablier.address,
+      lit.address
+    );
+
+    return { sablier, lit, flx, altar, altarTreasury };
   }
 
   describe("Deployment", function () {
@@ -39,6 +45,14 @@ describe("Altar", function () {
     it("FLX should exist", async function () {
       const { flx } = await loadFixture(fixuture);
       expect(flx.address).to.exist;
+    });
+
+    it("Altar Treasury must have proper addresses setted", async function () {
+      const { altarTreasury, sablier, flx, lit } = await loadFixture(fixuture);
+      expect(altarTreasury.address).to.exist;
+
+      expect(await altarTreasury.lit()).to.equal(lit.address);
+      expect(await altarTreasury.sablier()).to.equal(sablier.address);
     });
 
     it("Altar must have proper addresses setted", async function () {
