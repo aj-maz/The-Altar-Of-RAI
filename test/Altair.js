@@ -5,7 +5,7 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-describe("Altair", function () {
+describe("Altar", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
@@ -19,14 +19,10 @@ describe("Altair", function () {
     const FLX = await ethers.getContractFactory("FLX");
     const flx = await FLX.deploy();
 
-    const Altair = await ethers.getContractFactory("Altair");
-    const altair = await Altair.deploy(
-      sablier.address,
-      lit.address,
-      flx.address
-    );
+    const Altar = await ethers.getContractFactory("Altar");
+    const altar = await Altar.deploy(sablier.address, lit.address, flx.address);
 
-    return { sablier, lit, flx, altair };
+    return { sablier, lit, flx, altar };
   }
 
   describe("Deployment", function () {
@@ -45,13 +41,13 @@ describe("Altair", function () {
       expect(flx.address).to.exist;
     });
 
-    it("Altair must have proper addresses setted", async function () {
-      const { altair, sablier, flx, lit } = await loadFixture(fixuture);
-      expect(altair.address).to.exist;
+    it("Altar must have proper addresses setted", async function () {
+      const { altar, sablier, flx, lit } = await loadFixture(fixuture);
+      expect(altar.address).to.exist;
 
-      expect(await altair.lit()).to.equal(lit.address);
-      expect(await altair.sablier()).to.equal(sablier.address);
-      expect(await altair.flx()).to.equal(flx.address);
+      expect(await altar.lit()).to.equal(lit.address);
+      expect(await altar.sablier()).to.equal(sablier.address);
+      expect(await altar.flx()).to.equal(flx.address);
     });
   });
 });

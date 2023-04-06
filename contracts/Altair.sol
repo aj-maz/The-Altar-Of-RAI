@@ -5,7 +5,7 @@ import "./interfaces/IFLX.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/ISablier.sol";
 
-contract Altair {
+contract Altar {
     IERC20 public lit;
     IFLX public flx;
     ISablier public sablier;
