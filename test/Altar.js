@@ -28,7 +28,14 @@ describe("Altar", function () {
       lit.address
     );
 
-    return { sablier, lit, flx, altar, altarTreasury };
+    await altar.setTreasury(altarTreasury.address);
+
+    const litBalance = 5 * 1000 * 1000;
+    const periode = 1000;
+
+    await lit.mint(altarTreasury.address, litBalance);
+
+    return { sablier, lit, flx, altar, altarTreasury, litBalance, periode };
   }
 
   describe("Deployment", function () {
@@ -63,5 +70,23 @@ describe("Altar", function () {
       expect(await altar.sablier()).to.equal(sablier.address);
       expect(await altar.flx()).to.equal(flx.address);
     });
+
+    it("Altar must have proper treasury address", async function () {
+      const { altar, altarTreasury } = await loadFixture(fixuture);
+      expect(await altar.treasury()).to.equal(altarTreasury.address);
+      await expect(altar.setTreasury(altarTreasury.address)).to.be.revertedWith(
+        "already setted"
+      );
+    });
   });
+
+  //describe("Create stream", function () {
+  //  it("Must be able to start the stream with periode", async function () {
+  //    const { altarTreasury, altar, periode } = await loadFixture(fixuture);
+  //    await altarTreasury.startStream(periode, altar.address);
+  //    expect(await altarTreasury.streamId()).to.not.equal(0);
+  //    expect(await altar.streamId()).to.exist;
+  //    expect(await altar.streamId()).to.not.equal(0);
+  //  });
+  //});
 });
