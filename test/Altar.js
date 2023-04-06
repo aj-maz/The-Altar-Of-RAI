@@ -80,13 +80,13 @@ describe("Altar", function () {
     });
   });
 
-  //describe("Create stream", function () {
-  //  it("Must be able to start the stream with periode", async function () {
-  //    const { altarTreasury, altar, periode } = await loadFixture(fixuture);
-  //    await altarTreasury.startStream(periode, altar.address);
-  //    expect(await altarTreasury.streamId()).to.not.equal(0);
-  //    expect(await altar.streamId()).to.exist;
-  //    expect(await altar.streamId()).to.not.equal(0);
-  //  });
-  //});
+  describe("Create stream", function () {
+    it("Must be able to start the stream with periode", async function () {
+      const { altarTreasury, altar, periode } = await loadFixture(fixuture);
+      await altarTreasury.startStream(periode, altar.address);
+      expect(await altarTreasury.streamId()).to.not.equal(0);
+      expect(await altar.streamId()).to.exist;
+      expect(await altar.streamId()).to.equal(await altarTreasury.streamId());
+    });
+  });
 });

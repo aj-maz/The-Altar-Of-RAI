@@ -10,6 +10,7 @@ contract Altar {
     IFLX public flx;
     ISablier public sablier;
     address public treasury;
+    uint256 public streamId;
 
     constructor(address sablier_, address lit_, address flx_) {
         lit = IERC20(lit_);
@@ -25,5 +26,10 @@ contract Altar {
     function setTreasury(address treasury_) public {
         require(treasury == address(0), "already setted");
         treasury = treasury_;
+    }
+
+    function setStreamId(uint256 streamId_) public onlyTreasury {
+        require(streamId == 0, "already setted");
+        streamId = streamId_;
     }
 }

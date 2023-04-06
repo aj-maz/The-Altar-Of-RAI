@@ -27,6 +27,6 @@ contract AltarTreasury {
             startTime,
             stopTime
         );
-        //Altar(altarAddress).setStreamId();
+        Altar(altarAddress_).setStreamId(streamId);
     }
 }
