@@ -5,6 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const deploySablier = require("./deploySablier");
 
 async function main() {
   //const currentTimestampInSeconds = Math.round(Date.now() / 1000);
@@ -22,6 +23,7 @@ async function main() {
   //    lockedAmount
   //  )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
   //);
+  const sablier = await deploySablier();
 }
 
 // We recommend this pattern to be able to use async/await everywhere

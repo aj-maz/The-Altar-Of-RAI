@@ -9,7 +9,7 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 ## Project Outline
 
 - [x] Hardhat project initialization
-- [ ] Deploy local sablier
+- [x] Deploy local sablier
 - [ ] A utility for handling sablier deposit gotcha
 - [ ] Initialize the stream
 - [ ] Poke functionality - withdraw from stream
