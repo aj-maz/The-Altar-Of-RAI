@@ -13,13 +13,29 @@ describe("Altair", function () {
     const Sablier = await ethers.getContractFactory("Sablier");
     const sablier = await Sablier.deploy();
 
-    return { sablier };
+    const LIT = await ethers.getContractFactory("LIT");
+    const lit = await LIT.deploy();
+
+    const FLX = await ethers.getContractFactory("FLX");
+    const flx = await FLX.deploy();
+
+    return { sablier, lit, flx };
   }
 
   describe("Deployment", function () {
     it("Sablier should exist", async function () {
       const { sablier } = await loadFixture(fixuture);
       expect(sablier.address).to.exist;
+    });
+
+    it("LIT should exist", async function () {
+      const { lit } = await loadFixture(fixuture);
+      expect(lit.address).to.exist;
+    });
+
+    it("FLX should exist", async function () {
+      const { flx } = await loadFixture(fixuture);
+      expect(flx.address).to.exist;
     });
   });
 });

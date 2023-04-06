@@ -13,7 +13,7 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 - [ ] A utility for handling sablier deposit gotcha
 - [ ] Initialize the stream
 - [ ] Poke functionality - withdraw from stream
-- [ ] Deploy local LIT & FLX
+- [x] Deploy local LIT & FLX
 - [ ] Provide an ERC1271 interface to interact with CoW
 - [ ] Mock CoW behaviour locally
 - [ ] Add burn functionality for FLX
