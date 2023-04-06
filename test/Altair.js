@@ -19,7 +19,14 @@ describe("Altair", function () {
     const FLX = await ethers.getContractFactory("FLX");
     const flx = await FLX.deploy();
 
-    return { sablier, lit, flx };
+    const Altair = await ethers.getContractFactory("Altair");
+    const altair = await Altair.deploy(
+      sablier.address,
+      lit.address,
+      flx.address
+    );
+
+    return { sablier, lit, flx, altair };
   }
 
   describe("Deployment", function () {
@@ -36,6 +43,15 @@ describe("Altair", function () {
     it("FLX should exist", async function () {
       const { flx } = await loadFixture(fixuture);
       expect(flx.address).to.exist;
+    });
+
+    it("Altair must have proper addresses setted", async function () {
+      const { altair, sablier, flx, lit } = await loadFixture(fixuture);
+      expect(altair.address).to.exist;
+
+      expect(await altair.lit()).to.equal(lit.address);
+      expect(await altair.sablier()).to.equal(sablier.address);
+      expect(await altair.flx()).to.equal(flx.address);
     });
   });
 });
