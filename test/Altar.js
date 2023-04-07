@@ -10,8 +10,12 @@ describe("Altar", function () {
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
   async function fixuture() {
+    const pokeCooldown = 100;
+
     const Sablier = await ethers.getContractFactory("Sablier");
     const sablier = await Sablier.deploy();
+
+    const cowRelayerAddress = "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110";
 
     const LIT = await ethers.getContractFactory("LIT");
     const lit = await LIT.deploy();
@@ -20,7 +24,13 @@ describe("Altar", function () {
     const flx = await FLX.deploy();
 
     const Altar = await ethers.getContractFactory("Altar");
-    const altar = await Altar.deploy(sablier.address, lit.address, flx.address);
+    const altar = await Altar.deploy(
+      sablier.address,
+      lit.address,
+      flx.address,
+      cowRelayerAddress,
+      pokeCooldown
+    );
 
     const AltarTreasury = await ethers.getContractFactory("AltarTreasury");
     const altarTreasury = await AltarTreasury.deploy(
@@ -35,7 +45,17 @@ describe("Altar", function () {
 
     await lit.mint(altarTreasury.address, litBalance);
 
-    return { sablier, lit, flx, altar, altarTreasury, litBalance, periode };
+    return {
+      sablier,
+      lit,
+      flx,
+      altar,
+      altarTreasury,
+      litBalance,
+      periode,
+      pokeCooldown,
+      cowRelayerAddress,
+    };
   }
 
   async function startedStreamFixture() {
@@ -73,12 +93,15 @@ describe("Altar", function () {
     });
 
     it("Altar must have proper addresses setted", async function () {
-      const { altar, sablier, flx, lit } = await loadFixture(fixuture);
+      const { altar, sablier, flx, lit, cowRelayerAddress } = await loadFixture(
+        fixuture
+      );
       expect(altar.address).to.exist;
 
       expect(await altar.lit()).to.equal(lit.address);
       expect(await altar.sablier()).to.equal(sablier.address);
       expect(await altar.flx()).to.equal(flx.address);
+      expect(await altar.cowRelayerAddress()).to.equal(cowRelayerAddress);
     });
 
     it("Altar must have proper treasury address", async function () {
@@ -115,6 +138,59 @@ describe("Altar", function () {
       );
       expect(await sablier.balanceOf(streamId, altar.address)).to.equal(
         litBalance
+      );
+    });
+  });
+
+  describe("Poke", function () {
+    it("Must not be able to poke at before the target time", async function () {
+      const { altar } = await loadFixture(startedStreamFixture);
+
+      await expect(altar.poke()).to.be.revertedWith("can't yet");
+    });
+    it("Must be able to poke at the proper time", async function () {
+      const { altar, pokeCooldown } = await loadFixture(startedStreamFixture);
+      await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
+      await network.provider.send("evm_mine");
+      await expect(altar.poke()).to.be.not.revertedWith("can't yet");
+    });
+
+    it("Must not be able to poke twice after each other", async function () {
+      const { altar, pokeCooldown } = await loadFixture(startedStreamFixture);
+      await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
+      await network.provider.send("evm_mine");
+      await expect(altar.poke()).to.be.not.revertedWith("can't yet");
+      await expect(altar.poke()).to.be.revertedWith("can't yet");
+    });
+
+    it("Must withdrawal from stream", async function () {
+      const { altar, lit, pokeCooldown } = await loadFixture(
+        startedStreamFixture
+      );
+      await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
+      await network.provider.send("evm_mine");
+      expect(await lit.balanceOf(altar.address)).to.be.equal(0);
+      await altar.poke();
+      expect(await lit.balanceOf(altar.address)).to.not.be.equal(0);
+    });
+
+    it("Must emit Poked event", async function () {
+      const { altar, pokeCooldown } = await loadFixture(startedStreamFixture);
+      await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
+      await network.provider.send("evm_mine");
+      await expect(altar.poke()).to.emit(altar, "Poked");
+    });
+
+    it("Must handle cow approval", async function () {
+      const { altar, lit, pokeCooldown, cowRelayerAddress } = await loadFixture(
+        startedStreamFixture
+      );
+      await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
+      await network.provider.send("evm_mine");
+      await altar.poke();
+      const altarBalance = await lit.balanceOf(altar.address);
+      expect(await lit.allowance(altar.address, cowRelayerAddress)).to.be.equal(
+        altarBalance
       );
     });
   });
