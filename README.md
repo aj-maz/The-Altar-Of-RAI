@@ -13,9 +13,8 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 - [x] Deploy local LIT & FLX
 - [x] Altar constructor
 - [x] Altar treasury constructor
-- [ ] Start a stream from treasury to the Alitar
+- [x] Start a stream from treasury to the Altar
 - [ ] A utility for handling sablier deposit gotcha
-- [ ] Initialize the stream
 - [ ] Poke functionality - withdraw from stream
 - [ ] Provide an ERC1271 interface to interact with CoW
 - [ ] Mock CoW behaviour locally

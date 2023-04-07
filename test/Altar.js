@@ -38,6 +38,16 @@ describe("Altar", function () {
     return { sablier, lit, flx, altar, altarTreasury, litBalance, periode };
   }
 
+  async function startedStreamFixture() {
+    const fixtureObj = await fixuture();
+    const { altarTreasury, periode, altar } = fixtureObj;
+    await altarTreasury.startStream(periode, altar.address);
+
+    const streamId = await altarTreasury.streamId();
+
+    return { ...fixtureObj, streamId };
+  }
+
   describe("Deployment", function () {
     it("Sablier should exist", async function () {
       const { sablier } = await loadFixture(fixuture);
@@ -87,6 +97,25 @@ describe("Altar", function () {
       expect(await altarTreasury.streamId()).to.not.equal(0);
       expect(await altar.streamId()).to.exist;
       expect(await altar.streamId()).to.equal(await altarTreasury.streamId());
+    });
+
+    it("Must be able to test stream in the time", async function () {
+      const { altarTreasury, altar, periode, sablier, streamId, litBalance } =
+        await loadFixture(startedStreamFixture);
+
+      expect(await sablier.balanceOf(streamId, altarTreasury.address)).to.equal(
+        litBalance
+      );
+      expect(await sablier.balanceOf(streamId, altar.address)).to.equal(0);
+
+      await network.provider.send("evm_increaseTime", [periode + 120]);
+      await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
+      expect(await sablier.balanceOf(streamId, altarTreasury.address)).to.equal(
+        0
+      );
+      expect(await sablier.balanceOf(streamId, altar.address)).to.equal(
+        litBalance
+      );
     });
   });
 });
