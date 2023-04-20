@@ -8,11 +8,10 @@ import "./interfaces/ISablier.sol";
 
 import {GPv2Order} from "./lib/cow/libraries/GPv2Order.sol";
 import {GPv2Settlement} from "./lib/cow/GPv2Settlement.sol";
+import {GPv2EIP1271} from "./lib/cow/interfaces/GPv2EIP1271.sol";
 
 contract Altar {
     using GPv2Order for *;
-    // bytes4(keccak256("isValidSignature(bytes32,bytes)")
-    bytes4 internal constant MAGICVALUE = 0x1626ba7e;
 
     uint256 public constant STANDARD_DELAY = 2 minutes;
 
@@ -75,7 +74,7 @@ contract Altar {
     }
 
     // @dev sell its entire balance of subject token
-    function getTradeableOrder() external view returns (GPv2Order.Data memory) {
+    function getTradeableOrder() public view returns (GPv2Order.Data memory) {
         uint256 balance = lit.balanceOf(address(this));
         // ensures that orders queried shortly after one another result in the same hash (to avoid spamming the orderbook)
         uint32 currentTimeBucket = ((uint32(block.timestamp) / 900) + 1) * 900;
@@ -100,23 +99,14 @@ contract Altar {
      * @notice Verifies that the signer is the owner of the signing contract.
      */
     function isValidSignature(
-        bytes32 _hash,
-        bytes calldata _signature
+        bytes32 orderDigest,
+        bytes calldata
     ) public view returns (bytes4) {
-        //uint256 litBalance = lit.balanceOf(address(this));
-        //GPv2Order.Data memory order = GPv2Order.Data(
-        //    lit,
-        //    IERC20(address(flx)),
-        //    address(this),
-        //    litBalance,
-        //);
-        // TODO: must find the proper orderHash computationally
-        // TODO: must verify that the hash is as same as the orderHash
-        // Then it return the magic value
-        // otherwise it returns 0xffffffff
-        // Validate signatures
-        return MAGICVALUE;
-        //return ;
+        require(
+            getTradeableOrder().hash(domainSeparator) == orderDigest,
+            "encoded order != tradable order"
+        );
+        return GPv2EIP1271.MAGICVALUE;
     }
 
     function burn() public {
