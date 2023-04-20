@@ -15,7 +15,18 @@ describe("Altar", function () {
     const Sablier = await ethers.getContractFactory("Sablier");
     const sablier = await Sablier.deploy();
 
-    const cowRelayerAddress = "0xC92E8bdf79f0507f65a392b0ab4667716BFE0110";
+    const GPv2AllowListAuthentication = await ethers.getContractFactory(
+      "GPv2AllowListAuthentication"
+    );
+    const gpv2Auth = await GPv2AllowListAuthentication.deploy();
+
+    const GPv2Settlement = await ethers.getContractFactory("GPv2Settlement");
+    const settlement = await GPv2Settlement.deploy(
+      gpv2Auth.address,
+      sablier.address
+    );
+
+    const cowRelayerAddress = await settlement.vaultRelayer();
 
     const LIT = await ethers.getContractFactory("LIT");
     const lit = await LIT.deploy();
@@ -28,8 +39,8 @@ describe("Altar", function () {
       sablier.address,
       lit.address,
       flx.address,
-      cowRelayerAddress,
-      pokeCooldown
+      pokeCooldown,
+      settlement.address
     );
 
     const AltarTreasury = await ethers.getContractFactory("AltarTreasury");
@@ -55,6 +66,7 @@ describe("Altar", function () {
       periode,
       pokeCooldown,
       cowRelayerAddress,
+      settlement,
     };
   }
 
@@ -101,7 +113,6 @@ describe("Altar", function () {
       expect(await altar.lit()).to.equal(lit.address);
       expect(await altar.sablier()).to.equal(sablier.address);
       expect(await altar.flx()).to.equal(flx.address);
-      expect(await altar.cowRelayerAddress()).to.equal(cowRelayerAddress);
     });
 
     it("Altar must have proper treasury address", async function () {
@@ -188,9 +199,8 @@ describe("Altar", function () {
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       await altar.poke();
-      const altarBalance = await lit.balanceOf(altar.address);
       expect(await lit.allowance(altar.address, cowRelayerAddress)).to.be.equal(
-        altarBalance
+        hre.ethers.constants.MaxUint256
       );
     });
   });

@@ -25,23 +25,25 @@ contract Altar {
     uint256 nextPokeTime;
     uint256 pokeCooldown;
 
-    // The CoW relayer contract to adjust approvals of lit
-    // We may want consider option to updating it.
-    address public cowRelayerAddress;
+    bytes32 public domainSeparator;
 
     constructor(
         address sablier_,
         address lit_,
         address flx_,
-        address cowRelayerAddress_,
-        uint256 pokeCooldown_
+        uint256 pokeCooldown_,
+        GPv2Settlement _settlementContract
     ) {
         lit = IERC20(lit_);
         sablier = ISablier(sablier_);
         flx = IFLX(flx_);
         pokeCooldown = pokeCooldown_;
         nextPokeTime = block.timestamp + STANDARD_DELAY;
-        cowRelayerAddress = cowRelayerAddress_;
+        domainSeparator = _settlementContract.domainSeparator();
+        lit.approve(
+            address(_settlementContract.vaultRelayer()),
+            type(uint).max
+        );
     }
 
     modifier onlyTreasury() {
@@ -69,7 +71,6 @@ contract Altar {
         uint256 streamBalance = sablier.balanceOf(streamId, address(this));
         sablier.withdrawFromStream(streamId, streamBalance);
         uint256 approvedBalance = lit.balanceOf(address(this));
-        lit.approve(cowRelayerAddress, approvedBalance);
         emit Poked(approvedBalance);
     }
 
