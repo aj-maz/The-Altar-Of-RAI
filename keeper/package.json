@@ -1,0 +1,10 @@
+{
+  "name": "keeper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@cowprotocol/cow-sdk": "^2.0.1",
+    "ethers": "5"
+  }
+}
