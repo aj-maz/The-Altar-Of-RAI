@@ -17,6 +17,8 @@ contract AltarTreasury {
         sablier = ISablier(sablier_);
     }
 
+    // TODO this should be ownable
+
     function startStream(uint256 periode_, address altarAddress_) public {
         uint deposit = lit.balanceOf(address(this));
         lit.approve(address(sablier), deposit);

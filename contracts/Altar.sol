@@ -30,6 +30,7 @@ contract Altar {
         address sablier_,
         address lit_,
         address flx_,
+        address treasury_,
         uint256 pokeCooldown_,
         GPv2Settlement _settlementContract
     ) {
@@ -43,16 +44,12 @@ contract Altar {
             address(_settlementContract.vaultRelayer()),
             type(uint).max
         );
+        treasury = treasury_;
     }
 
     modifier onlyTreasury() {
         require(msg.sender == treasury, "only treasury");
         _;
-    }
-
-    function setTreasury(address treasury_) public {
-        require(treasury == address(0), "already setted");
-        treasury = treasury_;
     }
 
     function setStreamId(uint256 streamId_) public onlyTreasury {

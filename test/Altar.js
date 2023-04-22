@@ -34,22 +34,21 @@ describe("Altar", function () {
     const FLX = await ethers.getContractFactory("FLX");
     const flx = await FLX.deploy();
 
-    const Altar = await ethers.getContractFactory("Altar");
-    const altar = await Altar.deploy(
-      sablier.address,
-      lit.address,
-      flx.address,
-      pokeCooldown,
-      settlement.address
-    );
-
     const AltarTreasury = await ethers.getContractFactory("AltarTreasury");
     const altarTreasury = await AltarTreasury.deploy(
       sablier.address,
       lit.address
     );
 
-    await altar.setTreasury(altarTreasury.address);
+    const Altar = await ethers.getContractFactory("Altar");
+    const altar = await Altar.deploy(
+      sablier.address,
+      lit.address,
+      flx.address,
+      altarTreasury.address,
+      pokeCooldown,
+      settlement.address
+    );
 
     const litBalance = 5 * 1000 * 1000;
     const periode = 1000;
@@ -118,9 +117,6 @@ describe("Altar", function () {
     it("Altar must have proper treasury address", async function () {
       const { altar, altarTreasury } = await loadFixture(fixuture);
       expect(await altar.treasury()).to.equal(altarTreasury.address);
-      await expect(altar.setTreasury(altarTreasury.address)).to.be.revertedWith(
-        "already setted"
-      );
     });
   });
 
