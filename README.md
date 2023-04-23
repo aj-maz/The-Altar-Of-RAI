@@ -16,12 +16,12 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 - [x] Start a stream from treasury to the Altar
 - [ ] A utility for handling sablier deposit gotcha
 - [x] Poke functionality - withdraw from stream
-- [ ] Provide an ERC1271 interface to interact with CoW
+- [x] Provide an ERC1271 interface to interact with CoW
 - [x] Deploy a LIT & FLX testcoin on goerli
-- [!] Make testcoins swappable using CoW
-- [ ] Deploy script of the contract on the goerli
-- [ ] Swap Keeper
-- [ ] UI
+- [x] Make testcoins swappable using CoW
+- [x] Deploy script of the contract on the goerli
+- [x] Swap Keeper
+- [x] UI
 
 Interacting with CoW using smart contracts was far more complex than I initialy estimated.
 This week I mostly put time on trying to figure out how to make CoW work and what we need to take care of
@@ -34,7 +34,7 @@ Some of the things I learned
 - [x] Understanding GPv2Order library
 - [x] Understanding how to sell tokens at current price no limit
 - [x] Understanding the security pitfalls of ERC-1271 and how to securly implement it
-- [ ] Understanding how to send a swap order off-chain on behalf of the smart contract
+- [x] Understanding how to send a swap order off-chain on behalf of the smart contract
 
 ## Components
 
