@@ -20,6 +20,7 @@ contract AltarTreasury {
     // TODO this should be ownable
 
     function startStream(uint256 periode_, address altarAddress_) public {
+        require(streamId == 0, "already started");
         uint deposit = lit.balanceOf(address(this));
         lit.approve(address(sablier), deposit);
         uint256 startTime = block.timestamp + STANDARD_DELAY;

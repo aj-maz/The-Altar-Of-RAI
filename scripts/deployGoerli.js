@@ -11,8 +11,8 @@ const addresses = {
   lit: "0x9e32c0EfF886B6Ccae99350Fd5e7002dCED55F15",
   flx: "0x91056d4a53e1faa1a84306d4deaec71085394bc8",
   settlement: "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
-  treasury: "0x47535486A9C1C12B0f61Ea56C2EbB2BE5f7156AA",
-  altar: "0x67368e5495beF0aC25F37E9ef053Ad7333097Da0",
+  treasury: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
+  altar: "0x22ba37dE2E05b797dB1Fc9EdD2324E88Af81fbF0",
 };
 
 const AMOUNT = 90000;
@@ -26,15 +26,16 @@ const deployTreasury = async () => {
   const Treasury = await hre.ethers.getContractFactory("AltarTreasury");
   const treasury = await Treasury.deploy(addresses.sablier, addresses.lit);
   console.log(`Altar treasury address: ${treasury.address}`);
+  return treasury;
 };
 
-const deployAltar = async () => {
+const deployAltar = async ({ treasuryAddress }) => {
   const Altar = await hre.ethers.getContractFactory("Altar");
   const altar = await Altar.deploy(
     addresses.sablier,
     addresses.lit,
     addresses.flx,
-    addresses.treasury,
+    treasuryAddress,
     POKE_COOLDOWN,
     addresses.settlement,
     {
@@ -47,9 +48,9 @@ const deployAltar = async () => {
   console.log(`Altar  address: ${altar.address}`);
 };
 
-const startStream = async () => {
+const startStream = async ({ treasuryAddress }) => {
   const Treasury = await hre.ethers.getContractFactory("AltarTreasury");
-  const treasury = Treasury.attach(addresses.treasury);
+  const treasury = Treasury.attach(treasuryAddress);
 
   try {
     await treasury.startStream(STREAM_PERIODE, addresses.altar);
@@ -60,7 +61,17 @@ const startStream = async () => {
 };
 
 async function main() {
-  await startStream();
+  // First deployTreasury
+  //await deployTreasury();
+  // Then send tokens to the treasury
+  // then deployAltar
+  //await deployAltar({
+  //  treasuryAddress: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
+  //});
+  // then startStream
+  await startStream({
+    treasuryAddress: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
+  });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

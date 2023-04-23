@@ -21,8 +21,8 @@ contract Altar {
     address public treasury;
     uint256 public streamId;
 
-    uint256 nextPokeTime;
-    uint256 pokeCooldown;
+    uint256 public nextPokeTime;
+    uint256 public pokeCooldown;
 
     bytes32 public domainSeparator;
 
