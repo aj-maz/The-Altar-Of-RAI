@@ -1,8 +1,8 @@
 require("@nomicfoundation/hardhat-toolbox");
 
 const GOERLI_PRIVATE_KEY =
-  "9ad95af9bacfa8d4c4a9958104a773145104a03c349bb0d1b58c9c52b25c5f5b";
-//0xcC2a0011B1Db2BeB2A0E2a48fB7Dc6CA2E044A0a
+  "dcc2cd461f09cedc108607d83672a0f958620991d8cee1fcfd9b3728debfde98";
+//0x27c0861EDFfC1b9f1A19e796b519c8EeFA27091C
 
 const GOERLI_RPC =
   "https://eth-goerli.g.alchemy.com/v2/l_THcPj6shiZ-E1LyKHnHeXx75E1iXrT";

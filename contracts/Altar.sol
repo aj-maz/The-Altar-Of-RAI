@@ -38,7 +38,7 @@ contract Altar {
         sablier = ISablier(sablier_);
         flx = IFLX(flx_);
         pokeCooldown = pokeCooldown_;
-        nextPokeTime = block.timestamp + STANDARD_DELAY;
+        nextPokeTime = block.timestamp + STANDARD_DELAY + pokeCooldown;
         domainSeparator = _settlementContract.domainSeparator();
         lit.approve(
             address(_settlementContract.vaultRelayer()),
@@ -61,11 +61,13 @@ contract Altar {
         return block.timestamp > nextPokeTime;
     }
 
+    // TODO: let's put streamId as an argument instead of state
     function poke() public {
         require(canPoke(), "can't yet");
         nextPokeTime = block.timestamp + pokeCooldown;
         uint256 streamBalance = sablier.balanceOf(streamId, address(this));
         sablier.withdrawFromStream(streamId, streamBalance);
+        // TODO: this need to be handled
         uint256 approvedBalance = lit.balanceOf(address(this));
         emit Poked(approvedBalance);
     }
@@ -106,6 +108,7 @@ contract Altar {
         return GPv2EIP1271.MAGICVALUE;
     }
 
+    // TODO: need to get rid of this
     function burn() public {
         uint256 flxBalance = flx.balanceOf(address(this));
         flx.burn(flxBalance);

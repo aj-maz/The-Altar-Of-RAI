@@ -7,23 +7,8 @@ const { ethers } = require("ethers");
 const Altar = require("../artifacts/contracts/Altar.sol/Altar.json");
 const axios = require("axios");
 
-const chainId = 5;
 const RPC_URL =
   "https://eth-goerli.g.alchemy.com/v2/l_THcPj6shiZ-E1LyKHnHeXx75E1iXrT";
-const private_key =
-  "9cc7625bf3cb066cefc044ad287b0490379abeee053d4c13acc361f907d948ac";
-
-const wallet = new ethers.Wallet(private_key);
-
-const orderBookApi = new OrderBookApi({ chainId });
-const subgraphApi = new SubgraphApi({ chainId });
-const orderSigningUtils = new OrderSigningUtils();
-
-const account = wallet.address;
-const contr = "0x02abbdbaaa7b1bb64b5c878f7ac17f8dda169532";
-
-const baseToken = "0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6";
-const targetToken = "0x02abbdbaaa7b1bb64b5c878f7ac17f8dda169532";
 
 const api_url = "https://api.cow.fi/goerli";
 
@@ -76,11 +61,11 @@ async function placeOrder(order, api_url) {
 
 const addresses = {
   sablier: "0xFc7E3a3073F88B0f249151192812209117C2014b",
-  lit: "0x9e32c0EfF886B6Ccae99350Fd5e7002dCED55F15",
-  flx: "0x91056d4a53e1faa1a84306d4deaec71085394bc8",
+  flx: "0x9e32c0EfF886B6Ccae99350Fd5e7002dCED55F15",
+  lit: "0x91056d4a53e1faa1a84306d4deaec71085394bc8",
   settlement: "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
-  treasury: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
-  altar: "0x22ba37dE2E05b797dB1Fc9EdD2324E88Af81fbF0",
+  treasury: "0xa5f2a0BB8AA738980e30Ec4a37415263fC470fa7",
+  altar: "0x4c94c01b2bA07bb90B39e9c39891c0456eA24c05",
 };
 
 const provider = new ethers.providers.JsonRpcProvider(RPC_URL);

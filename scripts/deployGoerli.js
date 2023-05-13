@@ -8,11 +8,11 @@ const hre = require("hardhat");
 
 const addresses = {
   sablier: "0xFc7E3a3073F88B0f249151192812209117C2014b",
-  lit: "0x9e32c0EfF886B6Ccae99350Fd5e7002dCED55F15",
-  flx: "0x91056d4a53e1faa1a84306d4deaec71085394bc8",
+  flx: "0x9e32c0EfF886B6Ccae99350Fd5e7002dCED55F15",
+  lit: "0x91056d4a53e1faa1a84306d4deaec71085394bc8",
   settlement: "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
-  treasury: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
-  altar: "0x22ba37dE2E05b797dB1Fc9EdD2324E88Af81fbF0",
+  treasury: "0xa5f2a0BB8AA738980e30Ec4a37415263fC470fa7",
+  altar: "0x4c94c01b2bA07bb90B39e9c39891c0456eA24c05",
 };
 
 const AMOUNT = 90000;
@@ -61,16 +61,16 @@ const startStream = async ({ treasuryAddress }) => {
 };
 
 async function main() {
-  // First deployTreasury
-  //await deployTreasury();
+  //First deployTreasury
+  await deployTreasury();
   // Then send tokens to the treasury
   // then deployAltar
   //await deployAltar({
-  //  treasuryAddress: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
+  //  treasuryAddress: "0xa5f2a0BB8AA738980e30Ec4a37415263fC470fa7",
   //});
   // then startStream
   await startStream({
-    treasuryAddress: "0x07621e58b00290985bd31238e2C2f335890cb4Db",
+    treasuryAddress: "0xa5f2a0BB8AA738980e30Ec4a37415263fC470fa7",
   });
 }
 
