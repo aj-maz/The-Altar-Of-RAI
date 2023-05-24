@@ -40,6 +40,9 @@ describe("Altar", function () {
       lit.address
     );
 
+    const AuctionHouse = await ethers.getContractFactory("AuctionHouse");
+    const auctionHouse = await AuctionHouse.deploy(flx.address, lit.address);
+
     const Altar = await ethers.getContractFactory("Altar");
     const altar = await Altar.deploy(
       sablier.address,
@@ -47,8 +50,10 @@ describe("Altar", function () {
       flx.address,
       altarTreasury.address,
       pokeCooldown,
-      settlement.address
+      auctionHouse.address
     );
+
+    await auctionHouse.initialize(altar.address);
 
     const litBalance = 5 * 1000 * 1000;
     const periode = 1000;
@@ -66,6 +71,7 @@ describe("Altar", function () {
       pokeCooldown,
       cowRelayerAddress,
       settlement,
+      auctionHouse,
     };
   }
 
@@ -171,14 +177,14 @@ describe("Altar", function () {
     });
 
     it("Must withdrawal from stream", async function () {
-      const { altar, lit, pokeCooldown } = await loadFixture(
+      const { altar, lit, pokeCooldown, auctionHouse } = await loadFixture(
         startedStreamFixture
       );
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       expect(await lit.balanceOf(altar.address)).to.be.equal(0);
       await altar.poke();
-      expect(await lit.balanceOf(altar.address)).to.not.be.equal(0);
+      expect(await lit.balanceOf(auctionHouse.address)).to.not.be.equal(0);
     });
 
     it("Must emit Poked event", async function () {
@@ -188,16 +194,15 @@ describe("Altar", function () {
       await expect(altar.poke()).to.emit(altar, "Poked");
     });
 
-    it("Must handle cow approval", async function () {
-      const { altar, lit, pokeCooldown, cowRelayerAddress } = await loadFixture(
+    it("Must create an auction in auction house", async function () {
+      const { altar, pokeCooldown, auctionHouse } = await loadFixture(
         startedStreamFixture
       );
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
+      expect((await auctionHouse.bids(1)).amountToSell).to.be.equal(0);
       await altar.poke();
-      expect(await lit.allowance(altar.address, cowRelayerAddress)).to.be.equal(
-        hre.ethers.constants.MaxUint256
-      );
+      expect((await auctionHouse.bids(1)).amountToSell).to.not.be.equal(0);
     });
   });
 });

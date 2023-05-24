@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "./interfaces/IFLX.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/ISablier.sol";
-//import "lib/cow/src/contracts/libraries/GPv2Order.sol";
+import "./interfaces/IAuctionHouse.sol";
 
 import {GPv2Order} from "./lib/cow/libraries/GPv2Order.sol";
 import {GPv2Settlement} from "./lib/cow/GPv2Settlement.sol";
@@ -18,13 +18,12 @@ contract Altar {
     IERC20 public lit;
     IFLX public flx;
     ISablier public sablier;
+    IAuctionHouse public auctionHouse;
     address public treasury;
     uint256 public streamId;
 
     uint256 public nextPokeTime;
     uint256 public pokeCooldown;
-
-    bytes32 public domainSeparator;
 
     constructor(
         address sablier_,
@@ -32,19 +31,15 @@ contract Altar {
         address flx_,
         address treasury_,
         uint256 pokeCooldown_,
-        GPv2Settlement _settlementContract
+        address auctionHouse_
     ) {
         lit = IERC20(lit_);
         sablier = ISablier(sablier_);
         flx = IFLX(flx_);
         pokeCooldown = pokeCooldown_;
         nextPokeTime = block.timestamp + STANDARD_DELAY + pokeCooldown;
-        domainSeparator = _settlementContract.domainSeparator();
-        lit.approve(
-            address(_settlementContract.vaultRelayer()),
-            type(uint).max
-        );
         treasury = treasury_;
+        auctionHouse = IAuctionHouse(auctionHouse_);
     }
 
     modifier onlyTreasury() {
@@ -67,51 +62,10 @@ contract Altar {
         nextPokeTime = block.timestamp + pokeCooldown;
         uint256 streamBalance = sablier.balanceOf(streamId, address(this));
         sablier.withdrawFromStream(streamId, streamBalance);
-        // TODO: this need to be handled
         uint256 approvedBalance = lit.balanceOf(address(this));
+        lit.approve(address(auctionHouse), approvedBalance);
+        auctionHouse.startAuction(approvedBalance);
         emit Poked(approvedBalance);
-    }
-
-    // @dev sell its entire balance of subject token
-    function getTradeableOrder() public view returns (GPv2Order.Data memory) {
-        uint256 balance = lit.balanceOf(address(this));
-        // ensures that orders queried shortly after one another result in the same hash (to avoid spamming the orderbook)
-        uint32 currentTimeBucket = ((uint32(block.timestamp) / 900) + 1) * 900;
-        return
-            GPv2Order.Data(
-                lit,
-                IERC20(flx),
-                address(this),
-                balance,
-                1, // 0 buy amount is not allowed
-                currentTimeBucket + 900, // between 15 and 30 miunte validity
-                keccak256("TradeSubjectForTargetFromAltar"),
-                0,
-                GPv2Order.KIND_SELL,
-                false,
-                GPv2Order.BALANCE_ERC20,
-                GPv2Order.BALANCE_ERC20
-            );
-    }
-
-    /**
-     * @notice Verifies that the signer is the owner of the signing contract.
-     */
-    function isValidSignature(
-        bytes32 orderDigest,
-        bytes calldata
-    ) public view returns (bytes4) {
-        require(
-            getTradeableOrder().hash(domainSeparator) == orderDigest,
-            "encoded order != tradable order"
-        );
-        return GPv2EIP1271.MAGICVALUE;
-    }
-
-    // TODO: need to get rid of this
-    function burn() public {
-        uint256 flxBalance = flx.balanceOf(address(this));
-        flx.burn(flxBalance);
     }
 
     event Poked(uint256 balance);
