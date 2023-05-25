@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-etherscan");
 
 const GOERLI_PRIVATE_KEY =
   "dcc2cd461f09cedc108607d83672a0f958620991d8cee1fcfd9b3728debfde98";
@@ -23,5 +24,10 @@ module.exports = {
       url: GOERLI_RPC,
       accounts: [GOERLI_PRIVATE_KEY],
     },
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: { goerli: "XKD169WPEB3MJVFHX92D6TMJV5VPREAZ1P" },
   },
 };
