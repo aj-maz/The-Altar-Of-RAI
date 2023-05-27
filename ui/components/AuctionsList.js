@@ -14,7 +14,7 @@ import { dateFormat } from "./lib/utils";
 import moment from "moment";
 import { ethers } from "ethers";
 
-const BidHistory = ({ auctions }) => {
+const BidHistory = ({ auctions, setSelectedAuction }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -22,8 +22,8 @@ const BidHistory = ({ auctions }) => {
           <TableRow>
             <TableCell>ID</TableCell>
             <TableCell>Bid Amount</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Bidder</TableCell>
+            <TableCell>Highest Bid</TableCell>
+            <TableCell>CreatedAt</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -37,17 +37,22 @@ const BidHistory = ({ auctions }) => {
               css={css`
                 cursor: pointer;
               `}
+              onClick={() => setSelectedAuction(item)}
             >
               <TableCell component="th" scope="row">
-                {item.id}
+                {ethers.BigNumber.from(item.id).toString()}
               </TableCell>
               <TableCell>
-                {ethers.utils.formatEther(item.sellAmount)} $KITE
+                {ethers.utils.formatEther(item.amountToSell)} $KITE
               </TableCell>
               <TableCell>
-                {ethers.utils.formatEther(item.sellAmount)} $FLX
+                {ethers.utils.formatEther(item.highestBid)} $FLX
               </TableCell>
-              <TableCell>{moment(item.deadline).format(dateFormat)}</TableCell>
+              <TableCell>
+                {moment(Number(String(item.auctionDeadline)) * 1000).format(
+                  dateFormat
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

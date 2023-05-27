@@ -21,7 +21,7 @@ const DataPanel = ({ children, progress }) => {
       >
         {children}
       </div>
-      {progress && (
+      {!!progress && (
         <LinearProgress
           color="secondary"
           variant="determinate"

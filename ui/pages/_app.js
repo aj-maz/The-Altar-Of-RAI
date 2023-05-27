@@ -1,5 +1,12 @@
 //import { DataProvider } from "../data/providers";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
+import "../styles/globals.css";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  gql,
+} from "@apollo/client";
 
 const darkTheme = createTheme({
   typography: {
@@ -16,7 +23,7 @@ const darkTheme = createTheme({
       light: "#B3A8FF",
     },
     secondary: {
-      main: "#F4D06F",
+      main: "#e65219",
     },
     background: {
       default: "#322f2d",
@@ -60,12 +67,19 @@ const darkTheme = createTheme({
   },
 });
 
+const client = new ApolloClient({
+  uri: "https://api.thegraph.com/subgraphs/name/ajand/altar-of-rai",
+  cache: new InMemoryCache(),
+});
+
 function MyApp({ Component, pageProps }) {
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
 

@@ -7,7 +7,9 @@ import { ethers } from "ethers";
 import { dateFormat } from "./lib/utils";
 import AddressLink from "./AddressLink";
 
-const AuctionInfo = ({ info }) => {
+const AuctionInfo = ({ auction }) => {
+  console.log(auction);
+
   return (
     <Paper>
       <Typography
@@ -33,13 +35,18 @@ const AuctionInfo = ({ info }) => {
                   color: ${theme.palette.secondary.main};
                 `}
               >
-                {ethers.utils.formatEther(info.amountToSell)} $LITE
+                {ethers.utils.formatEther(auction.amountToSell)} $LITE
               </span>
             </Typography>
           </Grid>
           <Grid md={6} item>
             <Typography variant="body1">
-              Highest Bidder: <AddressLink address={info.highestBidder} />
+              Highest Bidder:{" "}
+              {auction.highBidder ? (
+                <AddressLink address={auction.highBidder.id} />
+              ) : (
+                "None"
+              )}
             </Typography>
           </Grid>
           <Grid md={6} item>
@@ -50,7 +57,7 @@ const AuctionInfo = ({ info }) => {
                   color: ${theme.palette.secondary.main};
                 `}
               >
-                {ethers.utils.formatEther(info.currentBid)} $FLX
+                {ethers.utils.formatEther(auction.highestBid)} $FLX
               </span>
             </Typography>
           </Grid>
@@ -62,8 +69,10 @@ const AuctionInfo = ({ info }) => {
                   color: ${theme.palette.secondary.main};
                 `}
               >
-                {info.deadline > new Date()
-                  ? moment(info.deadline).format(dateFormat)
+                {Number(auction.auctionDeadline.toString()) * 1000 > new Date()
+                  ? moment(
+                      Number(auction.auctionDeadline.toString()) * 1000
+                    ).format(dateFormat)
                   : "Already Ended!"}
               </span>
             </Typography>

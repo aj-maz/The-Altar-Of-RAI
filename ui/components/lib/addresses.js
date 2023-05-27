@@ -1,0 +1,10 @@
+const addresses = {
+  sablier: "0xFc7E3a3073F88B0f249151192812209117C2014b",
+  flx: "0xcDf649bd76C199FC99bEbBc48aE16426b9f67DdF",
+  kite: "0xeB6c682988C109346DEb1ba877f3FA34Cc1c1883",
+  treasury: "0xb1984847CB503418915E293f2B8f01B1aB289B81",
+  altar: "0xe2Cb07da23Cff8Beb6665192f9D417Ba65c777Ab",
+  auctionHouse: "0x9D19cC66560bc02BE56Bd2FCaa7A5A97323e450A",
+};
+
+export default addresses;

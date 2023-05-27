@@ -4,6 +4,9 @@ import { css } from "@emotion/react";
 import { Container, Grid } from "@mui/material";
 import { ethers } from "ethers";
 
+import { useQuery, gql } from "@apollo/client";
+import { useState, useEffect } from "react";
+
 import AuctionInfo from "../components/AuctionInfo.js";
 import Bidder from "../components/Bidder.js";
 import BidHistory from "../components/BidHistory.js";
@@ -11,105 +14,117 @@ import RestartAuction from "../components/RestartAuction.js";
 import SettleAuction from "../components/SettleAuction.js";
 import Withdraw from "../components/Withdraw.js";
 import AuctionsList from "../components/AuctionsList.js";
+import useTransactions from "../components/useTransactions.js";
+import addresses from "../components/lib/addresses.js";
+import TxSnakbar from "../components/TxSnakbar.js";
+
+const AUCTIONS = gql`
+  {
+    auctions(first: 100) {
+      id
+      amountToSell
+      highBidder {
+        id
+      }
+      bidExpiry
+      settled
+      bidExpiry
+      createdAt
+      bidsCount
+      highestBid
+      createdAt
+      auctionDeadline
+      bids {
+        id
+        bidder {
+          id
+          balance
+        }
+        date
+        bidAmount
+      }
+    }
+  }
+`;
 
 const AuctionsPage = () => {
-  const auctionInfo = {
-    amountToSell: ethers.utils.parseEther("3"),
-    highestBidder: "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8",
-    currentBid: ethers.utils.parseEther("1.5"),
-    deadline: new Date(1684896028560 + 24 * 7 * 3600 * 1000),
-  };
+  const auctionsQuery = useQuery(AUCTIONS);
+  const [anotherRefetchCounter, setARC] = useState(0);
+
+  const [selectedAuction, setSelectedAuction] = useState(null);
+
+  const {
+    bid,
+    recipient,
+    neededApproval,
+    increaseAllowance,
+    txType,
+    refetchCounter,
+  } = useTransactions({ addresses });
+
+  useEffect(() => {
+    setInterval(() => {
+      setARC((r) => r + 1);
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
+    auctionsQuery.refetch();
+  }, [refetchCounter, anotherRefetchCounter]);
+
+  useEffect(() => {
+    if (auctionsQuery.data && auctionsQuery.data.auctions.length) {
+      if (!selectedAuction) {
+        setSelectedAuction(auctionsQuery.data.auctions[0]);
+      }
+    }
+  }, [auctionsQuery.data]);
 
   const context = {
-    bidIncrease: ethers.utils.parseEther("5"),
+    bidIncrease: ethers.utils.parseEther("0.5"),
   };
-
-  const bidsHistory = [
-    {
-      id: 1,
-      bidder: "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8",
-      currentBid: ethers.utils.parseEther("1.5"),
-      date: new Date(1684896028560 + 24 * 8 * 3600 * 1000),
-    },
-    {
-      id: 2,
-      bidder: "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8",
-      currentBid: ethers.utils.parseEther("2.5"),
-      date: new Date(1684896028560 + 24 * 9 * 3600 * 1000),
-    },
-    {
-      id: 3,
-      bidder: "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8",
-      currentBid: ethers.utils.parseEther("11.5"),
-      date: new Date(1684896028560 + 24 * 10 * 3600 * 1000),
-    },
-    {
-      id: 4,
-      bidder: "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8",
-      currentBid: ethers.utils.parseEther("15.5"),
-      date: new Date(1684896028560 + 24 * 11 * 3600 * 1000),
-    },
-  ];
-
-  const auctions = [
-    {
-      id: 1,
-      sellAmount: ethers.utils.parseEther("4"),
-      currentBid: ethers.utils.parseEther("1.5"),
-      deadline: new Date(1684896028560 + 24 * 8 * 3600 * 1000),
-    },
-    {
-      id: 2,
-      sellAmount: ethers.utils.parseEther("6"),
-      currentBid: ethers.utils.parseEther("2.5"),
-      deadline: new Date(1684896028560 + 24 * 8 * 3600 * 1000),
-    },
-    {
-      id: 3,
-      sellAmount: ethers.utils.parseEther("5"),
-      currentBid: ethers.utils.parseEther("6.5"),
-      deadline: new Date(1684896028560 + 24 * 8 * 3600 * 1000),
-    },
-    {
-      id: 4,
-      sellAmount: ethers.utils.parseEther("7"),
-      currentBid: ethers.utils.parseEther("2.5"),
-      deadline: new Date(1684896028560 + 24 * 8 * 3600 * 1000),
-    },
-  ];
-
   const userFlxBalance = ethers.utils.parseEther("15.5");
 
   const actions = {
     bid: () => {},
   };
 
-  return (
-    <Container>
-      <Grid
-        container
-        css={css`
-          margin-top: 1em;
-        `}
-        spacing={2}
-      >
+  const loading = auctionsQuery.loading;
+
+  if (loading) {
+    return <div>Loading ...</div>;
+  }
+
+  const renderAuction = (auction) => {
+    if (!auction) return null;
+
+    return (
+      <>
+        <TxSnakbar recipient={recipient} txType={txType} />
         <Grid item md={8}>
-          <AuctionInfo info={auctionInfo} context={context} />
+          <AuctionInfo auction={auction} context={context} />
           <div
             css={css`
               margin-bottom: 1em;
             `}
           ></div>
-          <BidHistory bidsHistory={bidsHistory} context={context} />
+          <BidHistory bidsHistory={auction.bids} context={context} />
         </Grid>
         <Grid item md={4}>
-          <Bidder info={auctionInfo} context={context} actions={actions} />
+          <Bidder
+            bid={bid}
+            context={context}
+            recipient={recipient}
+            auction={auction}
+            neededApproval={neededApproval}
+            increaseAllowance={increaseAllowance}
+          />
           <div
             css={css`
               margin-bottom: 1em;
             `}
           ></div>
-          <RestartAuction info={auctionInfo} context={context} />
+          <RestartAuction context={context} />
           <div
             css={css`
               margin-bottom: 1em;
@@ -123,8 +138,25 @@ const AuctionsPage = () => {
           ></div>
           <Withdraw userFlxBalance={userFlxBalance} />
         </Grid>
+      </>
+    );
+  };
+
+  return (
+    <Container>
+      <Grid
+        container
+        css={css`
+          margin-top: 1em;
+        `}
+        spacing={2}
+      >
+        {renderAuction(selectedAuction)}
         <Grid item md={12}>
-          <AuctionsList auctions={auctions} />
+          <AuctionsList
+            setSelectedAuction={setSelectedAuction}
+            auctions={auctionsQuery.data.auctions}
+          />
         </Grid>
       </Grid>
     </Container>

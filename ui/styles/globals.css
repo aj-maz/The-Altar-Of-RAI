@@ -24,24 +24,3 @@ a {
     background: black;
   }
 }*/
-
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-
-.data-holder {
-  background-color: #e8e8e8;
-  padding: 2em;
-}
-
-h4 {
-  margin: 0;
-  margin-bottom: 0.75em;
-}
-
-.info-section {
-  margin-bottom: 1.5em;
-}

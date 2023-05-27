@@ -16,6 +16,7 @@ import moment from "moment";
 import { ethers } from "ethers";
 
 const BidHistory = ({ bidsHistory }) => {
+  console.log(bidsHistory);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -34,12 +35,14 @@ const BidHistory = ({ bidsHistory }) => {
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {item.id}
+                {ethers.BigNumber.from(item.id).toString()}
               </TableCell>
-              <TableCell>{ethers.utils.formatEther(item.currentBid)}</TableCell>
-              <TableCell>{moment(item.date).format(dateFormat)}</TableCell>
+              <TableCell>{ethers.utils.formatEther(item.bidAmount)}</TableCell>
               <TableCell>
-                <AddressLink address={item.bidder} />
+                {moment(Number(String(item.date)) * 1000).format(dateFormat)}
+              </TableCell>
+              <TableCell>
+                <AddressLink address={item.bidder.id} />
               </TableCell>
             </TableRow>
           ))}

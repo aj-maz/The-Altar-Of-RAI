@@ -9,9 +9,10 @@ const useData = (addresses) => {
   const [loading, setLoading] = useState(true);
   const [streamId, setStreamId] = useState(null);
   const [streamData, setStreamData] = useState(null);
-  const [altarLitBalance, setAltarLitBalance] = useState(null);
+  const [altarKiteBalance, setAltarKiteBalance] = useState(null);
   const [altarFlxBalance, setAltarFlxBalance] = useState(null);
   const [nextPokeTime, setNextPokeTime] = useState(null);
+  const [pokeCooldown, setPokeCooldown] = useState(null);
 
   const main = async () => {
     const GOERLI_RPC =
@@ -33,7 +34,7 @@ const useData = (addresses) => {
 
     const altar = new ethers.Contract(addresses.altar, Altar.abi, provider);
 
-    const lit = new ethers.Contract(addresses.lit, IERC20.abi, provider);
+    const kite = new ethers.Contract(addresses.kite, IERC20.abi, provider);
     const flx = new ethers.Contract(addresses.flx, IERC20.abi, provider);
 
     const streamId = await altarTreasury.streamId();
@@ -41,19 +42,34 @@ const useData = (addresses) => {
 
     try {
       const streamData = await sablier.getStream(streamId);
-      setStreamData(streamData);
+      const streamBalanceOfAltar = await sablier.balanceOf(
+        streamId,
+        altar.address
+      );
+      const streamBalanceOfTreasury = await sablier.balanceOf(
+        streamId,
+        altarTreasury.address
+      );
+      setStreamData({
+        ...streamData,
+        streamBalanceOfAltar,
+        streamBalanceOfTreasury,
+      });
     } catch (err) {}
 
-    const altarLitBalance = await lit.balanceOf(addresses.altar);
+    const altarKiteBalance = await kite.balanceOf(addresses.altar);
     const altarFlxBalance = await flx.balanceOf(addresses.altar);
 
-    setAltarLitBalance(altarLitBalance);
+    setAltarKiteBalance(altarKiteBalance);
     setAltarFlxBalance(altarFlxBalance);
 
     const nextPokeTime = new Date(
       parseInt(String(await altar.nextPokeTime())) * 1000
     );
     setNextPokeTime(nextPokeTime);
+
+    const pokeCooldown = await altar.pokeCooldown();
+    setPokeCooldown(pokeCooldown);
 
     setLoading(false);
   };
@@ -66,10 +82,11 @@ const useData = (addresses) => {
     loading,
     data: {
       altarFlxBalance,
-      altarLitBalance,
+      altarKiteBalance,
       streamId,
       streamData,
       nextPokeTime,
+      pokeCooldown,
     },
   };
 };
