@@ -5,7 +5,7 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-describe("Altar", function () {
+describe("Altar", function() {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
@@ -40,8 +40,10 @@ describe("Altar", function () {
       lit.address
     );
 
-    const AuctionHouse = await ethers.getContractFactory("AuctionHouse");
-    const auctionHouse = await AuctionHouse.deploy(flx.address, lit.address);
+    const EasyAuction = await ethers.getContractFactory("EasyAuction");
+    const easyAuction = await EasyAuction.deploy();
+
+    const auctionTime = 5 * 60;
 
     const Altar = await ethers.getContractFactory("Altar");
     const altar = await Altar.deploy(
@@ -50,10 +52,9 @@ describe("Altar", function () {
       flx.address,
       altarTreasury.address,
       pokeCooldown,
-      auctionHouse.address
+      auctionTime,
+      easyAuction.address
     );
-
-    await auctionHouse.initialize(altar.address);
 
     const litBalance = 5 * 1000 * 1000;
     const periode = 1000;
@@ -71,7 +72,8 @@ describe("Altar", function () {
       pokeCooldown,
       cowRelayerAddress,
       settlement,
-      auctionHouse,
+      easyAuction,
+      auctionTime,
     };
   }
 
@@ -85,23 +87,23 @@ describe("Altar", function () {
     return { ...fixtureObj, streamId };
   }
 
-  describe("Deployment", function () {
-    it("Sablier should exist", async function () {
+  describe("Deployment", function() {
+    it("Sablier should exist", async function() {
       const { sablier } = await loadFixture(fixuture);
       expect(sablier.address).to.exist;
     });
 
-    it("LIT should exist", async function () {
+    it("LIT should exist", async function() {
       const { lit } = await loadFixture(fixuture);
       expect(lit.address).to.exist;
     });
 
-    it("FLX should exist", async function () {
+    it("FLX should exist", async function() {
       const { flx } = await loadFixture(fixuture);
       expect(flx.address).to.exist;
     });
 
-    it("Altar Treasury must have proper addresses setted", async function () {
+    it("Altar Treasury must have proper addresses setted", async function() {
       const { altarTreasury, sablier, flx, lit } = await loadFixture(fixuture);
       expect(altarTreasury.address).to.exist;
 
@@ -109,7 +111,7 @@ describe("Altar", function () {
       expect(await altarTreasury.sablier()).to.equal(sablier.address);
     });
 
-    it("Altar must have proper addresses setted", async function () {
+    it("Altar must have proper addresses setted", async function() {
       const { altar, sablier, flx, lit, cowRelayerAddress } = await loadFixture(
         fixuture
       );
@@ -120,14 +122,14 @@ describe("Altar", function () {
       expect(await altar.flx()).to.equal(flx.address);
     });
 
-    it("Altar must have proper treasury address", async function () {
+    it("Altar must have proper treasury address", async function() {
       const { altar, altarTreasury } = await loadFixture(fixuture);
       expect(await altar.treasury()).to.equal(altarTreasury.address);
     });
   });
 
-  describe("Create stream", function () {
-    it("Must be able to start the stream with periode", async function () {
+  describe("Create stream", function() {
+    it("Must be able to start the stream with periode", async function() {
       const { altarTreasury, altar, periode } = await loadFixture(fixuture);
       await altarTreasury.startStream(periode, altar.address);
       expect(await altarTreasury.streamId()).to.not.equal(0);
@@ -135,9 +137,15 @@ describe("Altar", function () {
       expect(await altar.streamId()).to.equal(await altarTreasury.streamId());
     });
 
-    it("Must be able to test stream in the time", async function () {
-      const { altarTreasury, altar, periode, sablier, streamId, litBalance } =
-        await loadFixture(startedStreamFixture);
+    it("Must be able to test stream in the time", async function() {
+      const {
+        altarTreasury,
+        altar,
+        periode,
+        sablier,
+        streamId,
+        litBalance,
+      } = await loadFixture(startedStreamFixture);
 
       expect(await sablier.balanceOf(streamId, altarTreasury.address)).to.equal(
         litBalance
@@ -155,20 +163,20 @@ describe("Altar", function () {
     });
   });
 
-  describe("Poke", function () {
-    it("Must not be able to poke at before the target time", async function () {
+  describe("Poke", function() {
+    it("Must not be able to poke at before the target time", async function() {
       const { altar } = await loadFixture(startedStreamFixture);
 
       await expect(altar.poke()).to.be.revertedWith("can't yet");
     });
-    it("Must be able to poke at the proper time", async function () {
+    it("Must be able to poke at the proper time", async function() {
       const { altar, pokeCooldown } = await loadFixture(startedStreamFixture);
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       await expect(altar.poke()).to.be.not.revertedWith("can't yet");
     });
 
-    it("Must not be able to poke twice after each other", async function () {
+    it("Must not be able to poke twice after each other", async function() {
       const { altar, pokeCooldown } = await loadFixture(startedStreamFixture);
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
@@ -176,33 +184,31 @@ describe("Altar", function () {
       await expect(altar.poke()).to.be.revertedWith("can't yet");
     });
 
-    it("Must withdrawal from stream", async function () {
-      const { altar, lit, pokeCooldown, auctionHouse } = await loadFixture(
+    it("Must withdrawal from stream", async function() {
+      const { altar, lit, pokeCooldown, easyAuction } = await loadFixture(
         startedStreamFixture
       );
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       expect(await lit.balanceOf(altar.address)).to.be.equal(0);
       await altar.poke();
-      expect(await lit.balanceOf(auctionHouse.address)).to.not.be.equal(0);
+      expect(await lit.balanceOf(easyAuction.address)).to.not.be.equal(0);
     });
 
-    it("Must emit Poked event", async function () {
+    it("Must emit Poked event", async function() {
       const { altar, pokeCooldown } = await loadFixture(startedStreamFixture);
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       await expect(altar.poke()).to.emit(altar, "Poked");
     });
 
-    it("Must create an auction in auction house", async function () {
-      const { altar, pokeCooldown, auctionHouse } = await loadFixture(
+    it("Must emit NewAuction event in auctionHouse ", async function() {
+      const { altar, pokeCooldown, easyAuction } = await loadFixture(
         startedStreamFixture
       );
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
-      expect((await auctionHouse.bids(1)).amountToSell).to.be.equal(0);
-      await altar.poke();
-      expect((await auctionHouse.bids(1)).amountToSell).to.not.be.equal(0);
+      await expect(altar.poke()).to.emit(easyAuction, "NewAuction");
     });
   });
 });
