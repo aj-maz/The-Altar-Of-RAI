@@ -27,7 +27,7 @@ const BidHistory = ({ auctions, setSelectedAuction }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {auctions.map((item) => (
+          {auctions.map((item, i) => (
             <TableRow
               key={item.id}
               sx={{
@@ -37,7 +37,7 @@ const BidHistory = ({ auctions, setSelectedAuction }) => {
               css={css`
                 cursor: pointer;
               `}
-              onClick={() => setSelectedAuction(item)}
+              onClick={() => setSelectedAuction(i)}
             >
               <TableCell component="th" scope="row">
                 {ethers.BigNumber.from(item.id).toString()}

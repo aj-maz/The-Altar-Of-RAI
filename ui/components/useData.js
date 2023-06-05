@@ -78,6 +78,8 @@ const useData = (addresses) => {
     main();
   }, []);
 
+  const refetch = () => main();
+
   return {
     loading,
     data: {
@@ -87,6 +89,7 @@ const useData = (addresses) => {
       streamData,
       nextPokeTime,
       pokeCooldown,
+      refetch,
     },
   };
 };

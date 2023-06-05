@@ -2,8 +2,8 @@ require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-etherscan");
 
 const GOERLI_PRIVATE_KEY =
-  "dcc2cd461f09cedc108607d83672a0f958620991d8cee1fcfd9b3728debfde98";
-//0x27c0861EDFfC1b9f1A19e796b519c8EeFA27091C
+  "305cc1d841d44e9080febe06d2a478031fd30cc7d259611d1d7f55347cd68edb";
+//0x0E74907aC06260169C4D38231FbD44f6B21FE15A
 
 const GOERLI_RPC =
   "https://eth-goerli.g.alchemy.com/v2/l_THcPj6shiZ-E1LyKHnHeXx75E1iXrT";

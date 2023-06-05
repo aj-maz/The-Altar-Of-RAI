@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { LinearProgress, Paper } from "@mui/material";
+import { LinearProgress, Typography } from "@mui/material";
 
 const DataPanel = ({ children, progress }) => {
   return (
@@ -14,13 +14,14 @@ const DataPanel = ({ children, progress }) => {
         `
       }
     >
-      <div
+      <Typography
         css={css`
           padding: 0.45em 1em;
         `}
+        variant="body1"
       >
         {children}
-      </div>
+      </Typography>
       {!!progress && (
         <LinearProgress
           color="secondary"

@@ -3,8 +3,20 @@
 import { css } from "@emotion/react";
 import { Grid, Typography, Paper, Divider, Button } from "@mui/material";
 import { ethers } from "ethers";
+import { useState, useEffect } from "react";
 
-const Withdraw = ({ userFlxBalance }) => {
+const Withdraw = ({ userFlxBalance, getUserBalance, withdraw, recipient }) => {
+  const [balance, setBalance] = useState(null);
+
+  useEffect(() => {
+    const main = async () => {
+      const balance = await getUserBalance();
+      setBalance(balance);
+    };
+
+    main();
+  }, [recipient]);
+
   return (
     <Paper>
       <Typography
@@ -35,7 +47,7 @@ const Withdraw = ({ userFlxBalance }) => {
                   `
                 }
               >
-                {ethers.utils.formatEther(userFlxBalance)} $FLX{" "}
+                {balance && ethers.utils.formatEther(balance)} $FLX{" "}
               </span>
             </Typography>
           </Grid>
@@ -45,6 +57,10 @@ const Withdraw = ({ userFlxBalance }) => {
               size="small"
               variant="contained"
               color="secondary"
+              onClick={() => {
+                withdraw();
+              }}
+              disabled={recipient}
             >
               Withdraw
             </Button>

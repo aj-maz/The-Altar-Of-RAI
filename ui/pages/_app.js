@@ -10,7 +10,7 @@ import {
 
 const darkTheme = createTheme({
   typography: {
-    fontFamily: "Golos Text",
+    fontFamily: "'Electrolize', sans-serif",
   },
   palette: {
     mode: "dark",

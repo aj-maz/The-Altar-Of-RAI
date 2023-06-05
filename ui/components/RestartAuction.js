@@ -32,6 +32,7 @@ const RestartAuction = ({}) => {
               size="small"
               variant="contained"
               color="secondary"
+              disabled
             >
               Restart
             </Button>

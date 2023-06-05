@@ -3,7 +3,7 @@
 import { css } from "@emotion/react";
 import { Grid, Typography, Paper, Divider, Button } from "@mui/material";
 
-const SettleAuction = ({ info, context, actions }) => {
+const SettleAuction = ({ auction, settle }) => {
   return (
     <Paper>
       <Typography
@@ -33,6 +33,10 @@ const SettleAuction = ({ info, context, actions }) => {
               size="small"
               variant="contained"
               color="secondary"
+              onClick={() => {
+                console.log("hi");
+                settle(auction.id);
+              }}
             >
               Settle
             </Button>

@@ -71,6 +71,51 @@ const useTransactions = ({ addresses }) => {
     }
   };
 
+  const getUserBalance = async () => {
+    try {
+      try {
+        if (!defaultAccount) {
+          await connect();
+        }
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const auctionHouse = new ethers.Contract(
+          addresses.auctionHouse,
+          AuctionHouse.abi,
+          signer
+        );
+        const userBalance = await auctionHouse.bidTokenBalances(defaultAccount);
+
+        return userBalance;
+      } catch (err) {
+        console.log(err);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const withdraw = async () => {
+    try {
+      if (!defaultAccount) {
+        await connect();
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const auctionHouse = new ethers.Contract(
+        addresses.auctionHouse,
+        AuctionHouse.abi,
+        signer
+      );
+      const recipient = await auctionHouse.withdrawBididngToken();
+
+      setRecipients(recipient);
+      setTxType("Withdrawing");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const neededApproval = async (bidAmount) => {
     try {
       if (!defaultAccount) {
@@ -136,9 +181,49 @@ const useTransactions = ({ addresses }) => {
     }
   };
 
-  const settle = async () => {};
+  const settle = async (id) => {
+    try {
+      if (!defaultAccount) {
+        await connect();
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const auctionHouse = new ethers.Contract(
+        addresses.auctionHouse,
+        AuctionHouse.abi,
+        signer
+      );
 
-  const restart = async () => {};
+      const recipient = await auctionHouse.settleAuction(id);
+
+      setRecipients(recipient);
+      setTxType("Settling");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const restart = async (id) => {
+    try {
+      if (!defaultAccount) {
+        await connect();
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const auctionHouse = new ethers.Contract(
+        addresses.auctionHouse,
+        AuctionHouse.abi,
+        signer
+      );
+
+      const recipient = await auctionHouse.restartAuction(id);
+
+      setRecipients(recipient);
+      setTxType("Restarting");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return {
     connect,
@@ -151,6 +236,8 @@ const useTransactions = ({ addresses }) => {
     neededApproval,
     increaseAllowance,
     txType,
+    getUserBalance,
+    withdraw,
   };
 };
 

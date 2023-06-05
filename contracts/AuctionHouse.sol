@@ -28,9 +28,9 @@ contract AuctionHouse is IAuctionHouse {
     // Minimum bid increase compared to the last bid in order to take the new one in consideration
     uint256 public bidIncrease = 5E17; // [wad]
     // How long the auction lasts after a new bid is submitted
-    uint48 public bidDuration = 3 hours; // [seconds]
+    uint48 public bidDuration = 3 minutes; // [seconds]
     // Total length of the auction
-    uint48 public totalAuctionLength = 2 days; // [seconds]
+    uint48 public totalAuctionLength = 15 minutes; // [seconds]
     // Number of auctions started up until now
     uint256 public auctionsStarted = 0;
 

@@ -8,8 +8,6 @@ import { dateFormat } from "./lib/utils";
 import AddressLink from "./AddressLink";
 
 const AuctionInfo = ({ auction }) => {
-  console.log(auction);
-
   return (
     <Paper>
       <Typography

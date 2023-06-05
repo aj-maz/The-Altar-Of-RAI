@@ -11,7 +11,7 @@ const NextEventIn = ({ nextPokeTime, pokeCooldown }) => {
   const [secondDifference, setSecondDifference] = useState(
     moment(nextPokeTime).diff(new Date(), "seconds")
   );
-  const daysDifference = moment(nextPokeTime).diff(new Date(), "days");
+  const secDiff = moment(nextPokeTime).diff(new Date(), "seconds");
 
   useEffect(() => {
     let a;
@@ -30,7 +30,7 @@ const NextEventIn = ({ nextPokeTime, pokeCooldown }) => {
 
   const renderText = () => {
     if (nextPokeTime > new Date()) {
-      return `Next event in ${daysDifference} days`;
+      return `Next event in ${secDiff} seconds`;
     } else {
       return "Ready To Poke!";
     }
@@ -40,11 +40,14 @@ const NextEventIn = ({ nextPokeTime, pokeCooldown }) => {
     if (secondDifference <= 0) {
       return 0;
     }
-    return Number(
-      String(
-        ethers.BigNumber.from(secondDifference)
-          .mul(ethers.BigNumber.from(100))
-          .div(pokeCooldown)
+    return (
+      100 -
+      Number(
+        String(
+          ethers.BigNumber.from(secondDifference)
+            .mul(ethers.BigNumber.from(100))
+            .div(pokeCooldown)
+        )
       )
     );
   };

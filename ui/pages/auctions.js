@@ -17,6 +17,7 @@ import AuctionsList from "../components/AuctionsList.js";
 import useTransactions from "../components/useTransactions.js";
 import addresses from "../components/lib/addresses.js";
 import TxSnakbar from "../components/TxSnakbar.js";
+import Loading from "../components/Loading";
 
 const AUCTIONS = gql`
   {
@@ -51,7 +52,7 @@ const AuctionsPage = () => {
   const auctionsQuery = useQuery(AUCTIONS);
   const [anotherRefetchCounter, setARC] = useState(0);
 
-  const [selectedAuction, setSelectedAuction] = useState(null);
+  const [selectedAuction, setSelectedAuction] = useState(0);
 
   const {
     bid,
@@ -60,6 +61,9 @@ const AuctionsPage = () => {
     increaseAllowance,
     txType,
     refetchCounter,
+    withdraw,
+    getUserBalance,
+    settle,
   } = useTransactions({ addresses });
 
   useEffect(() => {
@@ -69,13 +73,16 @@ const AuctionsPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log("trying to refetch???");
     auctionsQuery.refetch();
   }, [refetchCounter, anotherRefetchCounter]);
+
+  console.log(auctionsQuery);
 
   useEffect(() => {
     if (auctionsQuery.data && auctionsQuery.data.auctions.length) {
       if (!selectedAuction) {
-        setSelectedAuction(auctionsQuery.data.auctions[0]);
+        setSelectedAuction(auctionsQuery.data.auctions.length - 1);
       }
     }
   }, [auctionsQuery.data]);
@@ -85,17 +92,14 @@ const AuctionsPage = () => {
   };
   const userFlxBalance = ethers.utils.parseEther("15.5");
 
-  const actions = {
-    bid: () => {},
-  };
-
   const loading = auctionsQuery.loading;
 
   if (loading) {
-    return <div>Loading ...</div>;
+    return <Loading />;
   }
 
-  const renderAuction = (auction) => {
+  const renderAuction = () => {
+    const auction = auctionsQuery.data.auctions[selectedAuction];
     if (!auction) return null;
 
     return (
@@ -124,19 +128,32 @@ const AuctionsPage = () => {
               margin-bottom: 1em;
             `}
           ></div>
-          <RestartAuction context={context} />
+          <RestartAuction
+            context={context}
+            recipient={recipient}
+            auction={auction}
+          />
           <div
             css={css`
               margin-bottom: 1em;
             `}
           ></div>
-          <SettleAuction />
+          <SettleAuction
+            auction={auction}
+            recipient={recipient}
+            settle={settle}
+          />
           <div
             css={css`
               margin-bottom: 1em;
             `}
           ></div>
-          <Withdraw userFlxBalance={userFlxBalance} />
+          <Withdraw
+            withdraw={withdraw}
+            getUserBalance={getUserBalance}
+            userFlxBalance={userFlxBalance}
+            recipient={recipient}
+          />
         </Grid>
       </>
     );
@@ -151,7 +168,9 @@ const AuctionsPage = () => {
         `}
         spacing={2}
       >
-        {renderAuction(selectedAuction)}
+        {auctionsQuery.data &&
+          auctionsQuery.data.auctions.length &&
+          renderAuction()}
         <Grid item md={12}>
           <AuctionsList
             setSelectedAuction={setSelectedAuction}

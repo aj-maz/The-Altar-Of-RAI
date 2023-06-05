@@ -35,7 +35,7 @@ const Bidder = ({
 
   useEffect(() => {
     setBidAmount(ethers.utils.formatEther(currentBid.add(context.bidIncrease)));
-  }, [currentBid]);
+  }, [String(currentBid)]);
 
   useEffect(() => {
     const main = async () => {

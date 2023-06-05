@@ -5,11 +5,8 @@ import DataPanel from "./DataPanel";
 import { ethers } from "ethers";
 
 const BurnedFlx = ({ flxBalance }) => {
-  const balance = (
-    Number(ethers.utils.formatEther(flxBalance)) /
-    (1 * 10 ** 3)
-  ).toFixed(1);
+  const balance = (Number(ethers.utils.formatEther(flxBalance)) / 1).toFixed(1);
 
-  return <DataPanel>Burned {balance}k $FLX</DataPanel>;
+  return <DataPanel>Burned {balance} $FLX</DataPanel>;
 };
 export default BurnedFlx;

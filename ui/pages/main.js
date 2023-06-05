@@ -3,7 +3,7 @@
 import { css } from "@emotion/react";
 import { Container, Grid, Button, IconButton, Badge } from "@mui/material";
 import { LocalOffer, Info } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
@@ -17,6 +17,7 @@ import AddressDialog from "../components/AddressDIalog";
 import useTransactions from "../components/useTransactions";
 import addresses from "../components/lib/addresses";
 import Loading from "../components/Loading";
+import TxSnakbar from "../components/TxSnakbar.js";
 
 const AUCTIONS = gql`
   {
@@ -41,8 +42,8 @@ const AUCTIONS = gql`
 const Main = () => {
   const router = useRouter();
 
-  const { defaultAccount, connect, poke } = useTransactions({ addresses });
-
+  const { defaultAccount, connect, poke, txType, refetchCounter, recipient } =
+    useTransactions({ addresses });
   const auctionsQuery = useQuery(AUCTIONS);
 
   const [isPoking, setIsPoking] = useState(false);
@@ -50,12 +51,19 @@ const Main = () => {
 
   const data = useData(addresses);
 
+  useEffect(() => {
+    auctionsQuery.refetch();
+    data.data.refetch();
+  }, [recipient]);
+
   if (data.loading) {
     return <Loading />;
   }
 
   return (
     <Container>
+      <TxSnakbar recipient={recipient} txType={txType} />
+
       <Grid
         container
         css={css`
@@ -139,7 +147,7 @@ const Main = () => {
                   setIsPoking(false);
                 }}
                 size="small"
-                disabled={isPoking}
+                disabled={isPoking || recipient}
                 variant="contained"
                 color="secondary"
               >

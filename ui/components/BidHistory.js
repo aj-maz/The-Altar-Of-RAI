@@ -16,7 +16,6 @@ import moment from "moment";
 import { ethers } from "ethers";
 
 const BidHistory = ({ bidsHistory }) => {
-  console.log(bidsHistory);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
