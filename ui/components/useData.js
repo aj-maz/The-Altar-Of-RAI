@@ -15,10 +15,10 @@ const useData = (addresses) => {
   const [pokeCooldown, setPokeCooldown] = useState(null);
 
   const main = async () => {
-    const GOERLI_RPC =
-      "https://eth-goerli.g.alchemy.com/v2/l_THcPj6shiZ-E1LyKHnHeXx75E1iXrT";
+    const MUMBAI_RPC =
+      "https://polygon-mumbai.g.alchemy.com/v2/KPu4Nar9n4IokEp9OezJMq2BfgEZBo2A";
 
-    const provider = new ethers.providers.JsonRpcProvider(GOERLI_RPC);
+    const provider = new ethers.providers.JsonRpcProvider(MUMBAI_RPC);
 
     const altarTreasury = new ethers.Contract(
       addresses.treasury,
@@ -79,6 +79,16 @@ const useData = (addresses) => {
   }, []);
 
   const refetch = () => main();
+
+  console.log({
+    altarFlxBalance,
+    altarKiteBalance,
+    streamId,
+    streamData,
+    nextPokeTime,
+    pokeCooldown,
+    refetch,
+  });
 
   return {
     loading,

@@ -9,14 +9,16 @@ import useData from "../components/useData";
 import PokeButton from "../components/PokeButton";
 import DataShower from "../components/DataShower";
 
-const addresses = {
-  sablier: "0xFc7E3a3073F88B0f249151192812209117C2014b",
-  flx: "0x9e32c0EfF886B6Ccae99350Fd5e7002dCED55F15",
-  lit: "0x91056d4a53e1faa1a84306d4deaec71085394bc8",
-  settlement: "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
-  treasury: "0xa5f2a0BB8AA738980e30Ec4a37415263fC470fa7",
-  altar: "0x4c94c01b2bA07bb90B39e9c39891c0456eA24c05",
+const mumbaiAddresses = {
+  sablier: "0x7059A80bef72Eff58Fcd873733b54886DE621DDc",
+  flx: "0x2022B7A2A30B71cB8aFE3f7cc0Cd895942ab7a23",
+  kite: "0x9Fe0439781Dc7278450f4a8745E1F4E7F18c6a7A",
+  treasury: "0xbB07529aF8430A0E00b458b9b29a55Dc141177F0",
+  altar: "0x20D3d19667Eb4AfF64912D162C9d8A45cC3Fa023",
+  auctionHouse: "0x4100aF1E6e8bBc174fc5da4D409e1e3C03F1f85E",
 };
+
+const addresses = mumbaiAddresses;
 
 export default function Home() {
   const { loading, data } = useData(addresses);

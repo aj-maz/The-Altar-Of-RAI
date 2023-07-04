@@ -23,6 +23,13 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 - [x] Swap Keeper
 - [x] UI
 
+-[] FAQ
+-[] running docs
+-[] change docs
+-[] poke audit doc
+-[] mobile friendly
+-[] UI cleanup
+
 Interacting with CoW using smart contracts was far more complex than I initialy estimated.
 This week I mostly put time on trying to figure out how to make CoW work and what we need to take care of
 Some of the things I learned

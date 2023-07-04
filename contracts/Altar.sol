@@ -28,6 +28,8 @@ contract Altar {
     uint256 public pokeCooldown;
     uint256 public auctionTime;
 
+    uint256[] public auctions;
+
     constructor(
         address sablier_,
         address lit_,
@@ -75,20 +77,22 @@ contract Altar {
         );
     }
 
-    // TODO: let's put streamId as an argument instead of state
+    // TODO: Must handle if the balance is more than uint96 max
     function poke() public {
         require(canPoke(), "can't yet");
         nextPokeTime = block.timestamp + pokeCooldown;
         uint256 streamBalance = sablier.balanceOf(streamId, address(this));
-        sablier.withdrawFromStream(streamId, streamBalance);
+        if (streamBalance > 0) {
+            sablier.withdrawFromStream(streamId, streamBalance);
+        }
         uint256 approvedBalance = lit.balanceOf(address(this));
         lit.approve(address(auctionHouse), approvedBalance);
         uint96 auctionedSellAmount = calculateAuctionedSellAmount();
 
-        auctionHouse.initiateAuction(
+        uint256 auctionId = auctionHouse.initiateAuction(
             lit,
             flx,
-            0,
+            block.timestamp + auctionTime / 2,
             block.timestamp + auctionTime,
             auctionedSellAmount,
             1,
@@ -96,10 +100,15 @@ contract Altar {
             1,
             true,
             address(0),
-            bytes("0x")
+            "0x"
         );
-        emit Poked(approvedBalance);
+        auctions.push(auctionId);
+        emit Poked(approvedBalance, auctionId);
     }
 
-    event Poked(uint256 balance);
+    function getAuctions() public view returns (uint256[] memory) {
+        return auctions;
+    }
+
+    event Poked(uint256 balance, uint256 auctionId);
 }

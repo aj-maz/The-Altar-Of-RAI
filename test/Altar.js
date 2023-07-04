@@ -209,6 +209,7 @@ describe("Altar", function() {
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       await expect(altar.poke()).to.emit(easyAuction, "NewAuction");
+      console.log(await altar.getAuctions());
     });
   });
 });
