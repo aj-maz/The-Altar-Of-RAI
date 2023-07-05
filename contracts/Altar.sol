@@ -1,10 +1,9 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
 import "./interfaces/IFLX.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/ISablier.sol";
-import "./interfaces/IAuctionHouse.sol";
 import "./interfaces/IEasyAuction.sol";
 
 contract Altar {
@@ -82,7 +81,6 @@ contract Altar {
         uint256 approvedBalance = lit.balanceOf(address(this));
         lit.approve(address(auctionHouse), approvedBalance);
         uint96 auctionedSellAmount = calculateAuctionedSellAmount();
-
         uint256 auctionId = auctionHouse.initiateAuction(
             lit,
             flx,

@@ -23,15 +23,17 @@ We are launching HAI, with the governance token LIT. 20% of the LIT supply will 
 - [x] Swap Keeper
 - [x] UI
 
--[] FAQ
--[] running docs
--[] change docs
--[] poke audit doc
--[] mobile friendly
--[] UI cleanup -[x] Managing keys and api in dotenv
--[] Proper scripts for deployment
--[] Altar contract cleanup -[x] Removing CoW
--[] Removing old auctions
+- [] FAQ
+- [] running docs
+- [] change docs
+- [] poke audit doc
+- [] mobile friendly
+- [] UI cleanup
+- [x] Managing keys and api in dotenv
+- [] Proper scripts for deployment
+- [] Altar contract cleanup
+- [x] Removing CoW
+- [x] Removing old auctions
 
 Interacting with CoW using smart contracts was far more complex than I initialy estimated.
 This week I mostly put time on trying to figure out how to make CoW work and what we need to take care of
