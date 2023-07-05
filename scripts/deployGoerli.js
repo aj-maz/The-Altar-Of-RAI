@@ -53,13 +53,6 @@ const deployTreasury = async () => {
   return treasury;
 };
 
-const deployAuctionHouse = async () => {
-  const AuctionHouse = await hre.ethers.getContractFactory("AuctionHouse");
-  const auctionHouse = await AuctionHouse.deploy(addresses.flx, addresses.lit);
-  console.log(`Auction house address: ${auctionHouse.address}`);
-  return auctionHouse;
-};
-
 const deployAltar = async ({ treasuryAddress }) => {
   const Altar = await hre.ethers.getContractFactory("Altar");
   const altar = await Altar.deploy(
@@ -80,12 +73,6 @@ const deployAltar = async ({ treasuryAddress }) => {
   console.log(`Altar  address: ${altar.address}`);
 };
 
-const initializeAuctionHouse = async () => {
-  const AuctionHouse = await hre.ethers.getContractFactory("AuctionHouse");
-  const auctionHouse = AuctionHouse.attach(addresses.auctionHouse);
-
-  await auctionHouse.initialize(addresses.altar);
-};
 //
 const startStream = async ({ treasuryAddress }) => {
   const Treasury = await hre.ethers.getContractFactory("AltarTreasury");
