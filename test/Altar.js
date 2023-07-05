@@ -15,19 +15,6 @@ describe("Altar", function() {
     const Sablier = await ethers.getContractFactory("Sablier");
     const sablier = await Sablier.deploy();
 
-    const GPv2AllowListAuthentication = await ethers.getContractFactory(
-      "GPv2AllowListAuthentication"
-    );
-    const gpv2Auth = await GPv2AllowListAuthentication.deploy();
-
-    const GPv2Settlement = await ethers.getContractFactory("GPv2Settlement");
-    const settlement = await GPv2Settlement.deploy(
-      gpv2Auth.address,
-      sablier.address
-    );
-
-    const cowRelayerAddress = await settlement.vaultRelayer();
-
     const LIT = await ethers.getContractFactory("LIT");
     const lit = await LIT.deploy();
 
@@ -70,8 +57,6 @@ describe("Altar", function() {
       litBalance,
       periode,
       pokeCooldown,
-      cowRelayerAddress,
-      settlement,
       easyAuction,
       auctionTime,
     };
@@ -112,9 +97,7 @@ describe("Altar", function() {
     });
 
     it("Altar must have proper addresses setted", async function() {
-      const { altar, sablier, flx, lit, cowRelayerAddress } = await loadFixture(
-        fixuture
-      );
+      const { altar, sablier, flx, lit } = await loadFixture(fixuture);
       expect(altar.address).to.exist;
 
       expect(await altar.lit()).to.equal(lit.address);
@@ -209,7 +192,6 @@ describe("Altar", function() {
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
       await expect(altar.poke()).to.emit(easyAuction, "NewAuction");
-      console.log(await altar.getAuctions());
     });
   });
 });

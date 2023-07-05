@@ -39,7 +39,7 @@ const aota = (auctionObject) => {
   return Object.values(auctionObject);
 };
 
-describe("AuctionHouse", function () {
+describe("AuctionHouse", function() {
   async function fixuture() {
     const pokeCooldown = 100;
 
@@ -47,17 +47,6 @@ describe("AuctionHouse", function () {
 
     const Sablier = await ethers.getContractFactory("Sablier");
     const sablier = await Sablier.deploy();
-
-    const GPv2AllowListAuthentication = await ethers.getContractFactory(
-      "GPv2AllowListAuthentication"
-    );
-    const gpv2Auth = await GPv2AllowListAuthentication.deploy();
-
-    const GPv2Settlement = await ethers.getContractFactory("GPv2Settlement");
-    const settlement = await GPv2Settlement.deploy(
-      gpv2Auth.address,
-      sablier.address
-    );
 
     const cowRelayerAddress = await settlement.vaultRelayer();
 
@@ -152,25 +141,25 @@ describe("AuctionHouse", function () {
     return { ...fixtureObject };
   }
 
-  describe("Deployment", function () {
-    it("bid token must be right", async function () {
+  describe("Deployment", function() {
+    it("bid token must be right", async function() {
       const { flx, auctionHouse } = await loadFixture(fixuture);
       expect(await auctionHouse.bidToken()).to.equal(flx.address);
     });
 
-    it("auctioned token must be right", async function () {
+    it("auctioned token must be right", async function() {
       const { lit, auctionHouse } = await loadFixture(fixuture);
       expect(await auctionHouse.auctionedToken()).to.equal(lit.address);
     });
 
-    it("altar address must be right", async function () {
+    it("altar address must be right", async function() {
       const { altar, auctionHouse } = await loadFixture(fixuture);
       expect(await auctionHouse.altarAddress()).to.equal(altar.address);
     });
   });
 
-  describe("Start auction", function () {
-    it("Only altar can start auction", async function () {
+  describe("Start auction", function() {
+    it("Only altar can start auction", async function() {
       const { altar, auctionHouse } = await loadFixture(fixuture);
       await expect(
         auctionHouse.startAuction(...aota(auction1))
@@ -180,7 +169,7 @@ describe("AuctionHouse", function () {
       ).to.not.be.revertedWith("unauthorized!");
     });
 
-    it("amount to sell must be > 0", async function () {
+    it("amount to sell must be > 0", async function() {
       const { altar, auctionHouse } = await loadFixture(fixuture);
       await expect(
         auctionHouse.connect(altar).startAuction(...aota(auction0))
@@ -190,13 +179,13 @@ describe("AuctionHouse", function () {
       ).to.not.be.revertedWith("null-amount-sold");
     });
 
-    it("auctions started must increase", async function () {
+    it("auctions started must increase", async function() {
       const { altar, auctionHouse, lit } = await loadFixture(fixuture);
       await auctionHouse.connect(altar).startAuction(...aota(auction1));
       expect(await auctionHouse.auctionsStarted()).to.be.equal(1);
     });
 
-    it("bid object must be proper", async function () {
+    it("bid object must be proper", async function() {
       const { altar, auctionHouse } = await loadFixture(fixuture);
       await auctionHouse.connect(altar).startAuction(...aota(auction1));
       const bid = await auctionHouse.bids(1);
@@ -206,7 +195,7 @@ describe("AuctionHouse", function () {
       expect(bid.auctionDeadline).to.be.greaterThan(Number(new Date()) / 1000);
     });
 
-    it("It must transfer lit from altar to auction house", async function () {
+    it("It must transfer lit from altar to auction house", async function() {
       const { altar, auctionHouse, lit } = await loadFixture(fixuture);
       expect(await lit.balanceOf(auctionHouse.address)).to.be.equal(0);
       await auctionHouse.connect(altar).startAuction(...aota(auction1));
@@ -215,7 +204,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("It must emit start auction event", async function () {
+    it("It must emit start auction event", async function() {
       const { altar, auctionHouse } = await loadFixture(fixuture);
 
       await expect(
@@ -224,15 +213,15 @@ describe("AuctionHouse", function () {
     });
   });
 
-  describe("Increase bid size", function () {
-    it("it check if the bid existed", async function () {
+  describe("Increase bid size", function() {
+    it("it check if the bid existed", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       await expect(
         auctionHouse.connect(bidder).increaseBidSize(...aota(bidEr))
       ).to.be.revertedWith("high-bidder-not-set");
     });
 
-    it("it check if auction is not expired", async function () {
+    it("it check if auction is not expired", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       await auctionHouse.connect(bidder).increaseBidSize(...aota(bid1));
       const sevenDays = 7 * 24 * 60 * 60;
@@ -243,7 +232,7 @@ describe("AuctionHouse", function () {
       ).to.be.revertedWith("auction-already-expired");
     });
 
-    it("it check if bid amount is increased sufficiently", async function () {
+    it("it check if bid amount is increased sufficiently", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       await auctionHouse.connect(bidder).increaseBidSize(...aota(bid1));
       await expect(
@@ -251,7 +240,7 @@ describe("AuctionHouse", function () {
       ).to.be.revertedWith("insufficient-increase");
     });
 
-    it("it check auction house balance after bid for token transfer", async function () {
+    it("it check auction house balance after bid for token transfer", async function() {
       const { auctionHouse, bidder, flx } = await loadFixture(
         fixutureWithAuction
       );
@@ -268,7 +257,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("it check bidder balance after getting outbidded", async function () {
+    it("it check bidder balance after getting outbidded", async function() {
       const { auctionHouse, bidder, bidder2 } = await loadFixture(
         fixutureWithAuction
       );
@@ -281,7 +270,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("it check bidder balance if he already have balances available", async function () {
+    it("it check bidder balance if he already have balances available", async function() {
       const { auctionHouse, bidder, bidder2, flx } = await loadFixture(
         fixutureWithAuction
       );
@@ -297,7 +286,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("it check bidder balance after outbidding himself", async function () {
+    it("it check bidder balance after outbidding himself", async function() {
       const { auctionHouse, bidder, flx } = await loadFixture(
         fixutureWithAuction
       );
@@ -317,7 +306,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("it check new bid information", async function () {
+    it("it check new bid information", async function() {
       const { auctionHouse, bidder, bidder2 } = await loadFixture(
         fixutureWithAuction
       );
@@ -331,7 +320,7 @@ describe("AuctionHouse", function () {
       expect(bid2.bidAmount).to.equal(bid1_2.bidAmount);
       expect(bid2.highBidder).to.equal(bidder2.address);
     });
-    it("it check emittion of IncreaseBidSizeEvent", async function () {
+    it("it check emittion of IncreaseBidSizeEvent", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
 
       await expect(
@@ -340,8 +329,8 @@ describe("AuctionHouse", function () {
     });
   });
 
-  describe("Settle auction", function () {
-    it("It must check if the auction is actually finished", async function () {
+  describe("Settle auction", function() {
+    it("It must check if the auction is actually finished", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
 
       const sevenDays = 7 * 24 * 60 * 60;
@@ -353,7 +342,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("It must check if the auction is actually finished", async function () {
+    it("It must check if the auction is actually finished", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
 
       await auctionHouse.connect(bidder).increaseBidSize(...aota(bid1_2));
@@ -363,7 +352,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("It must check if the auction is already settled", async function () {
+    it("It must check if the auction is already settled", async function() {
       const { auctionHouse, bidder } = await loadFixture(
         fixutureWithBiddedAuction
       );
@@ -378,7 +367,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("It must check proper auctioned token transfer", async function () {
+    it("It must check proper auctioned token transfer", async function() {
       const { auctionHouse, bidder, lit } = await loadFixture(
         fixutureWithBiddedAuction
       );
@@ -396,7 +385,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("It must check proper bidding token transfer", async function () {
+    it("It must check proper bidding token transfer", async function() {
       const { auctionHouse, flx, altar } = await loadFixture(
         fixutureWithBiddedAuction
       );
@@ -414,7 +403,7 @@ describe("AuctionHouse", function () {
       );
     });
 
-    it("It must check emittion of SettleAuction event", async function () {
+    it("It must check emittion of SettleAuction event", async function() {
       const { auctionHouse, flx, altar } = await loadFixture(
         fixutureWithBiddedAuction
       );
@@ -430,15 +419,15 @@ describe("AuctionHouse", function () {
     });
   });
 
-  describe("Restart Auction", function () {
-    it("It check if the auction deadline is passed", async function () {
+  describe("Restart Auction", function() {
+    it("It check if the auction deadline is passed", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       await expect(
         auctionHouse.connect(bidder).restartAuction(1)
       ).to.be.revertedWith("not-finished");
     });
 
-    it("It check if the auction has no bid on it", async function () {
+    it("It check if the auction has no bid on it", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       await auctionHouse.connect(bidder).increaseBidSize(...aota(bid1));
       const sevenDays = 7 * 24 * 60 * 60;
@@ -449,7 +438,7 @@ describe("AuctionHouse", function () {
       ).to.be.revertedWith("bid-already-placed");
     });
 
-    it("Must change auction deadline", async function () {
+    it("Must change auction deadline", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       const beforeDeadline = (await auctionHouse.bids(1)).auctionDeadline;
       const sevenDays = 7 * 24 * 60 * 60;
@@ -462,7 +451,7 @@ describe("AuctionHouse", function () {
       expect(afterDeadline).to.be.greaterThan(beforeDeadline);
     });
 
-    it("it check emittion of RestartAuction", async function () {
+    it("it check emittion of RestartAuction", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureWithAuction);
       const sevenDays = 7 * 24 * 60 * 60;
       await ethers.provider.send("evm_increaseTime", [sevenDays]);
@@ -474,15 +463,15 @@ describe("AuctionHouse", function () {
     });
   });
 
-  describe("Withdraw bidding token", function () {
-    it("It check if user bid token balance gets zero", async function () {
+  describe("Withdraw bidding token", function() {
+    it("It check if user bid token balance gets zero", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureForWithdraw);
       await auctionHouse.connect(bidder).withdrawBididngToken();
       const afterBalance = await auctionHouse.bidTokenBalances(bidder.address);
       expect(afterBalance).to.equal(0);
     });
 
-    it("It check if user got his bid tokens back", async function () {
+    it("It check if user got his bid tokens back", async function() {
       const { auctionHouse, bidder, flx } = await loadFixture(
         fixutureForWithdraw
       );
@@ -493,7 +482,7 @@ describe("AuctionHouse", function () {
       expect(flxAfterBalance.sub(flxBeforeBalance)).to.equal(beforeBalance);
     });
     //
-    it("It check emittion of BiddingTokenWithdraw", async function () {
+    it("It check emittion of BiddingTokenWithdraw", async function() {
       const { auctionHouse, bidder } = await loadFixture(fixutureForWithdraw);
 
       await expect(

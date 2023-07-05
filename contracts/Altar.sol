@@ -7,13 +7,7 @@ import "./interfaces/ISablier.sol";
 import "./interfaces/IAuctionHouse.sol";
 import "./interfaces/IEasyAuction.sol";
 
-import {GPv2Order} from "./lib/cow/libraries/GPv2Order.sol";
-import {GPv2Settlement} from "./lib/cow/GPv2Settlement.sol";
-import {GPv2EIP1271} from "./lib/cow/interfaces/GPv2EIP1271.sol";
-
 contract Altar {
-    using GPv2Order for *;
-
     uint256 public constant STANDARD_DELAY = 2 minutes;
 
     IERC20 public lit;

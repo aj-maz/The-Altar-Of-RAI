@@ -1,13 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-etherscan");
+require("dotenv").config();
 
-const GOERLI_PRIVATE_KEY = "";
-//0x0E74907aC06260169C4D38231FbD44f6B21FE15A
-
-const GOERLI_RPC =
-  "https://eth-goerli.g.alchemy.com/v2/l_THcPj6shiZ-E1LyKHnHeXx75E1iXrT";
-const MUMBAI_RPC =
-  "https://polygon-mumbai.g.alchemy.com/v2/KPu4Nar9n4IokEp9OezJMq2BfgEZBo2A";
+const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
+const GOERLI_RPC = process.env.GOERLI_RPC;
+const MUMBAI_RPC = process.env.MUMBAI_RPC;
+const ETHERSCAN_KEY = process.env.ETHERSCAN_KEY;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -23,16 +21,16 @@ module.exports = {
   networks: {
     goerli: {
       url: GOERLI_RPC,
-      accounts: [GOERLI_PRIVATE_KEY],
+      accounts: [DEPLOYER_PRIVATE_KEY],
     },
     mumbai: {
       url: MUMBAI_RPC,
-      accounts: [GOERLI_PRIVATE_KEY],
+      accounts: [DEPLOYER_PRIVATE_KEY],
     },
   },
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
-    apiKey: { goerli: "XKD169WPEB3MJVFHX92D6TMJV5VPREAZ1P" },
+    apiKey: { goerli: ETHERSCAN_KEY },
   },
 };
