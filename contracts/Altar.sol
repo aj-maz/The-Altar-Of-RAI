@@ -9,7 +9,7 @@ import "./interfaces/IEasyAuction.sol";
 contract Altar {
     uint256 public constant STANDARD_DELAY = 2 minutes;
 
-    IERC20 public lit;
+    IERC20 public kite;
     IERC20 public flx;
     ISablier public sablier;
     IEasyAuction public auctionHouse;
@@ -25,14 +25,14 @@ contract Altar {
 
     constructor(
         address sablier_,
-        address lit_,
+        address kite_,
         address flx_,
         address treasury_,
         uint256 pokeCooldown_,
         uint256 auctionTime_,
         address gnosisAuctionAddress_
     ) {
-        lit = IERC20(lit_);
+        kite = IERC20(kite_);
         sablier = ISablier(sablier_);
         flx = IERC20(flx_);
         pokeCooldown = pokeCooldown_;
@@ -61,7 +61,7 @@ contract Altar {
         view
         returns (uint96 auctionedSellAmount)
     {
-        uint256 totalBalance = lit.balanceOf(address(this));
+        uint256 totalBalance = kite.balanceOf(address(this));
         uint256 feeDenominator = auctionHouse.FEE_DENOMINATOR();
         uint256 feeNumerator = auctionHouse.feeNumerator();
 
@@ -78,11 +78,11 @@ contract Altar {
         if (streamBalance > 0) {
             sablier.withdrawFromStream(streamId, streamBalance);
         }
-        uint256 approvedBalance = lit.balanceOf(address(this));
-        lit.approve(address(auctionHouse), approvedBalance);
+        uint256 approvedBalance = kite.balanceOf(address(this));
+        kite.approve(address(auctionHouse), approvedBalance);
         uint96 auctionedSellAmount = calculateAuctionedSellAmount();
         uint256 auctionId = auctionHouse.initiateAuction(
-            lit,
+            kite,
             flx,
             block.timestamp + auctionTime / 2,
             block.timestamp + auctionTime,

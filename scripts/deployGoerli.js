@@ -9,7 +9,7 @@ const hre = require("hardhat");
 //const addresses = {
 //  sablier: "0xFc7E3a3073F88B0f249151192812209117C2014b",
 //  flx: "0xcDf649bd76C199FC99bEbBc48aE16426b9f67DdF",
-//  lit: "0xeB6c682988C109346DEb1ba877f3FA34Cc1c1883",
+//  kite: "0xeB6c682988C109346DEb1ba877f3FA34Cc1c1883",
 //  treasury: "0xb1984847CB503418915E293f2B8f01B1aB289B81",
 //  altar: "0xe2Cb07da23Cff8Beb6665192f9D417Ba65c777Ab",
 //  auctionHouse: "0xFc7E3a3073F88B0f249151192812209117C2014b",
@@ -20,7 +20,7 @@ const hre = require("hardhat");
 const goerliAddresses = {
   sablier: "0xFc7E3a3073F88B0f249151192812209117C2014b",
   flx: "0xcDf649bd76C199FC99bEbBc48aE16426b9f67DdF",
-  lit: "0x0494f45fcABF5edAb17ED75345c0c70Ed442125C",
+  kite: "0x0494f45fcABF5edAb17ED75345c0c70Ed442125C",
   treasury: "0xC68021FE976709B118ee0EdB710811d49CfAe30E",
   altar: "0x068aAE6D83f5b456c06D13530b90fbbA4bd75e98",
   auctionHouse: "0x1fBAb40C338E2e7243DA945820Ba680C92EF8281",
@@ -29,7 +29,7 @@ const goerliAddresses = {
 //const mumbaiAddresses = {
 //  sablier: "0x7059A80bef72Eff58Fcd873733b54886DE621DDc",
 //  flx: "0x2022B7A2A30B71cB8aFE3f7cc0Cd895942ab7a23",
-//  lit: "0x9Fe0439781Dc7278450f4a8745E1F4E7F18c6a7A",
+//  kite: "0x9Fe0439781Dc7278450f4a8745E1F4E7F18c6a7A",
 //  treasury: "0xbB07529aF8430A0E00b458b9b29a55Dc141177F0",
 //  altar: "0x20D3d19667Eb4AfF64912D162C9d8A45cC3Fa023",
 //  auctionHouse: "0x4100aF1E6e8bBc174fc5da4D409e1e3C03F1f85E",
@@ -47,7 +47,7 @@ const AUCTION_TIME = 2700;
 
 const deployTreasury = async () => {
   const Treasury = await hre.ethers.getContractFactory("AltarTreasury");
-  const treasury = await Treasury.deploy(addresses.sablier, addresses.lit);
+  const treasury = await Treasury.deploy(addresses.sablier, addresses.kite);
   console.log(treasury);
   console.log(`Altar treasury address: ${treasury.address}`);
   return treasury;
@@ -57,7 +57,7 @@ const deployAltar = async ({ treasuryAddress }) => {
   const Altar = await hre.ethers.getContractFactory("Altar");
   const altar = await Altar.deploy(
     addresses.sablier,
-    addresses.lit,
+    addresses.kite,
     addresses.flx,
     treasuryAddress,
     POKE_COOLDOWN,

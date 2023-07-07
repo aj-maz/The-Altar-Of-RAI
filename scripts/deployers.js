@@ -1,7 +1,7 @@
 const deployers = (hre, addresses) => {
   const deployTreasury = async () => {
     const Treasury = await hre.ethers.getContractFactory("AltarTreasury");
-    const treasury = await Treasury.deploy(addresses.sablier, addresses.lit);
+    const treasury = await Treasury.deploy(addresses.sablier, addresses.kite);
     console.log(`Altar treasury address: ${treasury.address}`);
     return treasury;
   };
@@ -14,7 +14,7 @@ const deployers = (hre, addresses) => {
     const Altar = await hre.ethers.getContractFactory("Altar");
     const altar = await Altar.deploy(
       addresses.sablier,
-      addresses.lit,
+      addresses.kite,
       addresses.flx,
       treasuryAddress ? treasuryAddress : addresses.treasury,
       pokeCooldown,

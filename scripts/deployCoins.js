@@ -4,7 +4,7 @@ const targetMint = "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8";
 
 async function main() {
   const ethers = hre.ethers;
-  const KITE = await hre.ethers.getContractFactory("LIT");
+  const KITE = await hre.ethers.getContractFactory("KITE");
   //const kite = await KITE.deploy();
   const kite = KITE.attach("0x0494f45fcABF5edAb17ED75345c0c70Ed442125C");
   //

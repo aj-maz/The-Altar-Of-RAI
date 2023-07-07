@@ -10,7 +10,7 @@ const deployMockTokens = require("./deployMockTokens");
 
 async function main() {
   const sablier = await deploySablier();
-  const { lit, flx } = await deployMockTokens();
+  const { kite, flx } = await deployMockTokens();
 }
 
 // We recommend this pattern to be able to use async/await everywhere

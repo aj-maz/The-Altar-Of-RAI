@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract LIT is ERC20, ERC20Burnable, Ownable {
+contract KITE is ERC20, ERC20Burnable, Ownable {
     constructor() ERC20("KITE", "KITE") {}
 
     function mint(address to, uint256 amount) public onlyOwner {

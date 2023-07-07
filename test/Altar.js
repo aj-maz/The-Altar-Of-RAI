@@ -15,8 +15,8 @@ describe("Altar", function() {
     const Sablier = await ethers.getContractFactory("Sablier");
     const sablier = await Sablier.deploy();
 
-    const LIT = await ethers.getContractFactory("LIT");
-    const lit = await LIT.deploy();
+    const KITE = await ethers.getContractFactory("KITE");
+    const kite = await KITE.deploy();
 
     const FLX = await ethers.getContractFactory("FLX");
     const flx = await FLX.deploy();
@@ -24,7 +24,7 @@ describe("Altar", function() {
     const AltarTreasury = await ethers.getContractFactory("AltarTreasury");
     const altarTreasury = await AltarTreasury.deploy(
       sablier.address,
-      lit.address
+      kite.address
     );
 
     const EasyAuction = await ethers.getContractFactory("EasyAuction");
@@ -35,7 +35,7 @@ describe("Altar", function() {
     const Altar = await ethers.getContractFactory("Altar");
     const altar = await Altar.deploy(
       sablier.address,
-      lit.address,
+      kite.address,
       flx.address,
       altarTreasury.address,
       pokeCooldown,
@@ -46,11 +46,11 @@ describe("Altar", function() {
     const litBalance = 5 * 1000 * 1000;
     const periode = 1000;
 
-    await lit.mint(altarTreasury.address, litBalance);
+    await kite.mint(altarTreasury.address, litBalance);
 
     return {
       sablier,
-      lit,
+      kite,
       flx,
       altar,
       altarTreasury,
@@ -78,9 +78,9 @@ describe("Altar", function() {
       expect(sablier.address).to.exist;
     });
 
-    it("LIT should exist", async function() {
-      const { lit } = await loadFixture(fixuture);
-      expect(lit.address).to.exist;
+    it("KITE should exist", async function() {
+      const { kite } = await loadFixture(fixuture);
+      expect(kite.address).to.exist;
     });
 
     it("FLX should exist", async function() {
@@ -89,18 +89,18 @@ describe("Altar", function() {
     });
 
     it("Altar Treasury must have proper addresses setted", async function() {
-      const { altarTreasury, sablier, flx, lit } = await loadFixture(fixuture);
+      const { altarTreasury, sablier, flx, kite } = await loadFixture(fixuture);
       expect(altarTreasury.address).to.exist;
 
-      expect(await altarTreasury.lit()).to.equal(lit.address);
+      expect(await altarTreasury.kite()).to.equal(kite.address);
       expect(await altarTreasury.sablier()).to.equal(sablier.address);
     });
 
     it("Altar must have proper addresses setted", async function() {
-      const { altar, sablier, flx, lit } = await loadFixture(fixuture);
+      const { altar, sablier, flx, kite } = await loadFixture(fixuture);
       expect(altar.address).to.exist;
 
-      expect(await altar.lit()).to.equal(lit.address);
+      expect(await altar.kite()).to.equal(kite.address);
       expect(await altar.sablier()).to.equal(sablier.address);
       expect(await altar.flx()).to.equal(flx.address);
     });
@@ -168,14 +168,14 @@ describe("Altar", function() {
     });
 
     it("Must withdrawal from stream", async function() {
-      const { altar, lit, pokeCooldown, easyAuction } = await loadFixture(
+      const { altar, kite, pokeCooldown, easyAuction } = await loadFixture(
         startedStreamFixture
       );
       await network.provider.send("evm_increaseTime", [pokeCooldown + 120]);
       await network.provider.send("evm_mine");
-      expect(await lit.balanceOf(altar.address)).to.be.equal(0);
+      expect(await kite.balanceOf(altar.address)).to.be.equal(0);
       await altar.poke();
-      expect(await lit.balanceOf(easyAuction.address)).to.not.be.equal(0);
+      expect(await kite.balanceOf(easyAuction.address)).to.not.be.equal(0);
     });
 
     it("Must emit Poked event", async function() {
