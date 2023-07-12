@@ -16,6 +16,10 @@ async function main() {
   const treasuryAddress = process.env.TREASURY_ADDRESS;
   const altarAddress = process.env.ALTAR_ADDRESS;
   const treasury = Treasury.attach(treasuryAddress);
+
+  const KITE = await hre.ethers.getContractFactory("KITE");
+  const kite = KITE.attach(await treasury.kite());
+
   try {
     await treasury.startStream(streamPeriode, altarAddress);
     console.log("treasury started");
