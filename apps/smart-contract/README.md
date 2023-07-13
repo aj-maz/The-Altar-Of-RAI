@@ -1,16 +1,3 @@
-# Altar of RAI
-
-Altar of RAI is a project developed for Reflexer DAO, which is responsible for RAI, a stablecoin built on the Ethereum blockchain. The project focuses on launching HAI, a multicollateral version of RAI, on the Optimism Layer 2 solution. HAI introduces the $KITE governance token, while $FLX serves as the governance token for RAI.
-
-## Overview
-
-The main objective of Altar of RAI is to facilitate a unique mechanism involving a Sablier stream and a Gnosis auction. The treasury streams \$KITE tokens into the Altar using Sablier, and upon interacting with the Altar, a method called "Poking" is triggered. This action initiates the following process:
-
-1.  The Altar places all the streamed \$KITE tokens on a Gnosis auction.
-2.  Participants in the auction can bid $FLX tokens for the $KITE tokens available.
-3.  The \$FLX tokens received from the auction are returned to the Altar.
-4.  The assumption is made that the received $FLX tokens are burned, thereby increasing the value of $FLX through the sacrifice of \$KITE tokens.
-
 ## Installation
 
 To install and set up the Altar of RAI project, follow these steps:
@@ -20,11 +7,10 @@ To install and set up the Altar of RAI project, follow these steps:
     `git clone https://github.com/Ajand/The-Altar-Of-RAI.git altar-contracts`
 
 2.  Navigate to the project directory:
-      
+
     `cd altar-contracts`
 
 3.  Install the required dependencies:
-      
     `npm install`
 
 ## Running & Scripts
@@ -43,7 +29,7 @@ To run the Altar of RAI project and execute various scripts, follow these steps:
   - `AUCTION_TIME`: Duration in seconds for the Gnosis auction.
 
 2.  Deploy the Altar contract:
-      
+
     `npx hardhat run scripts/deployAltar.js --network <network-name>`
 
     Replace `<network-name>` with the desired network (e.g., `goerli`, `mumbai`, etc.).
@@ -51,7 +37,7 @@ To run the Altar of RAI project and execute various scripts, follow these steps:
     This script deploys the Altar contract.
 
 3.  Deploy the Treasury contract:
-      
+
     `npx hardhat run scripts/deployTreasury.js --network <network-name>`
 
     Replace `<network-name>` with the desired network (e.g., `goerli`, `mumbai`, etc.).
@@ -59,7 +45,7 @@ To run the Altar of RAI project and execute various scripts, follow these steps:
     This script deploys the Treasury contract.
 
 4.  Deploy both the Altar and Treasury contracts:
-      
+
     `npx hardhat run scripts/deployAltarAndTreasury.js --network <network-name>`
 
     Replace `<network-name>` with the desired network (e.g., `goerli`, `mumbai`, etc.).
@@ -67,7 +53,7 @@ To run the Altar of RAI project and execute various scripts, follow these steps:
     This script deploys both the Altar and Treasury contracts.
 
 5.  Start the stream:
-      
+
     `npx hardhat run scripts/startStream.js --network <network-name>`
 
     Replace `<network-name>` with the desired network (e.g., `goerli`, `mumbai`, etc.).

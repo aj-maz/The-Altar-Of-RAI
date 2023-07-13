@@ -57,21 +57,20 @@ contract Altar {
     }
 
     function calculateAuctionedSellAmount()
-        public
+        internal
         view
         returns (uint96 auctionedSellAmount)
     {
         uint256 totalBalance = kite.balanceOf(address(this));
         uint256 feeDenominator = auctionHouse.FEE_DENOMINATOR();
         uint256 feeNumerator = auctionHouse.feeNumerator();
-
-        auctionedSellAmount = uint96(
-            (totalBalance * feeDenominator) / (feeDenominator + feeNumerator)
-        );
+        uint256 calculatedAuctionedSellAmount = (totalBalance *
+            feeDenominator) / (feeDenominator + feeNumerator);
+        auctionedSellAmount = uint96(calculatedAuctionedSellAmount);
     }
 
     // TODO: Must handle if the balance is more than uint96 max
-    function poke() public {
+    function poke() external {
         require(canPoke(), "can't yet");
         nextPokeTime = block.timestamp + pokeCooldown;
         uint256 streamBalance = sablier.balanceOf(streamId, address(this));
